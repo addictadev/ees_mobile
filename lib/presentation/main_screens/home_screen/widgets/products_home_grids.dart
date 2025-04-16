@@ -39,12 +39,11 @@ class ProductGrid extends StatelessWidget {
 
         return GridView.builder(
           padding: EdgeInsets.only(bottom: 3.h),
-          physics:
-              const NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.6,
+            childAspectRatio: 0.7,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
           ),
@@ -121,7 +120,9 @@ class ProductGrid extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(product.package ?? ''),
+                Text(product.variants!.first.maxQuantity.toString() +
+                    " " +
+                    product.package!),
                 Container(
                   padding: EdgeInsets.all(1.w),
                   decoration: getBoxDecoration(

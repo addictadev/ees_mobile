@@ -65,7 +65,7 @@ class _ExitPopUpState extends State<ExitPopUp>
                   ),
                   Center(
                       child: Text(
-                    'Do you want to exit the application?'.tr(),
+                    'هل تريد الخروج من التطبيق ؟'.tr(),
                     style:
                         const TextStyle(color: AppColors.primary, fontSize: 16),
                   )),
@@ -77,7 +77,7 @@ class _ExitPopUpState extends State<ExitPopUp>
                     children: [
                       TextButton(
                         child: Text(
-                          'Yes'.tr(),
+                          'نعم'.tr(),
                           style: const TextStyle(
                               color: AppColors.primary,
                               fontWeight: FontWeight.bold,
@@ -87,7 +87,7 @@ class _ExitPopUpState extends State<ExitPopUp>
                       ),
                       TextButton(
                         child: Text(
-                          'No'.tr(),
+                          'لا'.tr(),
                           style: const TextStyle(
                               color: AppColors.orange,
                               fontWeight: FontWeight.bold,

@@ -111,7 +111,8 @@ class HomeProvider extends ChangeNotifier {
         EndPoints.getAllHomeProducts,
         queryParameters: {
           'page': currentPage,
-          if (selectedCategory != null) 'category_id': selectedCategory,
+          if (selectedCategory != null && selectedCategory != 0)
+            'category_id': selectedCategory,
           if (selectedVendor != null) 'property_id': selectedVendor
         },
         requiresAuth: true,

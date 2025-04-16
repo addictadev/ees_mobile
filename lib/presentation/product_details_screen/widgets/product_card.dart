@@ -3,9 +3,11 @@ import 'package:ees/app/images_preview/custom_cashed_network_image.dart';
 import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/widgets/app_button.dart';
 import 'package:ees/controllers/cart_controller.dart';
+import 'package:ees/models/cart_model.dart';
 import 'package:ees/models/products_home_data_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -176,7 +178,9 @@ class ProductAttributes extends StatelessWidget {
 
         if (prop.name != null) {
           attributes.add(_AttributeItem(
-              icon: Icons.info_outline, label: prop.name!, value: prop.name!));
+              icon: Iconsax.profile_2user4,
+              label: 'اسم التاجر ',
+              value: prop.name!));
         }
       }
     }
@@ -239,8 +243,8 @@ class CompanyInfo extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _CompanyHeader(),
-          _CompanyDetails(),
+          _CompanyHeader(product),
+          _CompanyDetails(product),
           SizedBox(height: 2.h),
           Divider()
         ],
@@ -249,53 +253,41 @@ class CompanyInfo extends StatelessWidget {
   }
 }
 
-class _CompanyHeader extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(2.w),
-          child: Image.asset(
-            AppAssets.logo, // Replace with actual image URL
-            width: 20.w,
-            height: 20.w,
-            fit: BoxFit.contain,
-          ),
+Widget _CompanyHeader(ProductData? product) {
+  return Row(
+    children: [
+      ClipRRect(
+        borderRadius: BorderRadius.circular(2.w),
+        child: CustomCachedImage(
+          imageUrl: product?.properties![0].logo ?? '',
+          width: 20.w,
+          height: 20.w,
+          fit: BoxFit.contain,
         ),
-        SizedBox(width: 3.w),
-        Text(
-          "الشركة المصرية للحلول الكهربائية",
-          style: GoogleFonts.cairo(
-            fontSize: 15.sp,
-            fontWeight: FontWeight.bold,
-          ),
+      ),
+      SizedBox(width: 3.w),
+      Text(
+        product?.properties![0].name ?? "",
+        style: GoogleFonts.cairo(
+          fontSize: 15.sp,
+          fontWeight: FontWeight.bold,
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 }
 
-class _CompanyDetails extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _CompanyDetailItem(
-          icon: Icons.attach_money,
-          label: "حد أدنى للطلبية",
-          value: "5000 ج.م",
-        ),
-        SizedBox(height: 1.h),
-        _CompanyDetailItem(
-          icon: Icons.local_shipping,
-          label: "التوصيل",
-          value: "خلال 3 أيام",
-        ),
-      ],
-    );
-  }
+Widget _CompanyDetails(ProductData product) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _CompanyDetailItem(
+        icon: Iconsax.wallet,
+        label: "حد أدنى للطلبية",
+        value: "${product.properties![0].name} ج.م",
+      ),
+    ],
+  );
 }
 
 class _CompanyDetailItem extends StatelessWidget {
@@ -318,9 +310,9 @@ class _CompanyDetailItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 16.sp, color: Colors.grey[600]),
-          SizedBox(width: 2.w),
+          SizedBox(width: 1.w),
           Text(
-            "$label: $value",
+            "$label : $value",
             style: GoogleFonts.cairo(
                 fontSize: 15.sp,
                 color: Colors.grey[700],
