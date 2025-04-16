@@ -1,14 +1,14 @@
 class CartModel {
   bool? success;
   String? message;
-  Data? data;
+  CartItem? data;
 
   CartModel({this.success, this.message, this.data});
 
   CartModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? CartItem.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -22,13 +22,13 @@ class CartModel {
   }
 }
 
-class Data {
+class CartItem {
   List<Items>? items;
   int? totalPrice;
 
-  Data({this.items, this.totalPrice});
+  CartItem({this.items, this.totalPrice});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  CartItem.fromJson(Map<String, dynamic> json) {
     if (json['items'] != null) {
       items = <Items>[];
       json['items'].forEach((v) {
@@ -151,6 +151,7 @@ class Property {
   int? id;
   String? name;
   String? logo;
+  String? cart_min;
 
   Property({this.id, this.name, this.logo});
 
@@ -158,6 +159,7 @@ class Property {
     id = json['id'];
     name = json['name'];
     logo = json['logo'];
+    cart_min = json['cart_min'];
   }
 
   Map<String, dynamic> toJson() {
@@ -165,6 +167,7 @@ class Property {
     data['id'] = id;
     data['name'] = name;
     data['logo'] = logo;
+    data['cart_min'] = cart_min;
     return data;
   }
 }

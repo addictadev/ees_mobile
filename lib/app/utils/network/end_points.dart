@@ -21,4 +21,7 @@ class EndPoints {
   static const String getAllHomeProducts = "products/get-all";
   static const String addToCart = "cart/add-to-cart";
   static const String getCart = "cart/get-cart";
+  static const String incrementCartItem = "cart/increment-cart-quantity";
+  static const String decrementCartItem = "cart/decrement-cart-quantity";
+  static const String deleteCartItem = "cart/clear-cart";
 }

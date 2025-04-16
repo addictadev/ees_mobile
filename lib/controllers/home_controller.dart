@@ -111,6 +111,8 @@ class HomeProvider extends ChangeNotifier {
         EndPoints.getAllHomeProducts,
         queryParameters: {
           'page': currentPage,
+          if (selectedCategory != null) 'category_id': selectedCategory,
+          if (selectedVendor != null) 'property_id': selectedVendor
         },
         requiresAuth: true,
       );
@@ -126,11 +128,11 @@ class HomeProvider extends ChangeNotifier {
         }
 
         if (newProducts.pagination != null) {
-          hasMorePages = newProducts.pagination?.currentPage != 
-                        newProducts.pagination?.lastPage;
-          
+          hasMorePages = newProducts.pagination?.currentPage !=
+              newProducts.pagination?.lastPage;
+
           log("Pagination: Current=${newProducts.pagination?.currentPage}, Last=${newProducts.pagination?.lastPage}, HasMore=$hasMorePages");
-          
+
           if (hasMorePages) {
             currentPage++;
           }

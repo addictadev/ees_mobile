@@ -39,7 +39,14 @@ class VendorList extends StatelessWidget {
               final vendor = vendors[index];
               final isSelected = provider.selectedVendor == index;
               return GestureDetector(
-                onTap: () => provider.setSelectedVendor(index),
+                onTap: () {
+                  provider.setSelectedVendor(index);
+                  provider.selectedVendor = vendor.id;
+                  Provider.of<HomeProvider>(context, listen: false)
+                      .getAllHomeProducts(refresh: true);
+                  Provider.of<HomeProvider>(context, listen: false)
+                      .currentPage = 1;
+                },
                 child: Container(
                   width: 35.w,
                   margin: EdgeInsets.only(left: 3.w),

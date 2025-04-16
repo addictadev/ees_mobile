@@ -66,4 +66,5 @@ class AppAssets {
   static const String eyeIcon = "assets/icons/eye.svg";
   static const String filterIcon = "assets/icons/filter-search.svg";
   static const String product1 = "assets/images/img.png";
+  static const String emptyCart = "assets/images/emptycart.png";
 }

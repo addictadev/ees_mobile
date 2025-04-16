@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 
 import '../home_screen/widgets/homeAppBar.dart';
 import 'widgets/cart_item.dart';
+import 'widgets/empty_cart.dart';
+import 'widgets/minu_order_widget.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -33,10 +35,26 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
 
+// Initialize defaults
+    double totalPrice = 0;
+    double cartMin = 0;
+
+    final items = cartProvider.cartModel?.data?.items ?? [];
+
+    if (items.isNotEmpty) {
+      totalPrice = double.tryParse(
+              cartProvider.cartModel!.data!.totalPrice.toString()) ??
+          0;
+      cartMin = double.tryParse(items.first.property?.cart_min ?? "0") ?? 0;
+    }
+
     return Consumer<CartProvider>(
         builder: (BuildContext context, value, Widget? child) {
       return Scaffold(
-        bottomSheet: _buildBottomBar(cartProvider),
+        bottomSheet: cartProvider.cartModel!.data!.items!.isNotEmpty &&
+                totalPrice >= cartMin
+            ? _buildBottomBar(cartProvider)
+            : SizedBox(),
         body: Column(
           children: [
             HomeAppBar(text: 'العربة', isHome: false),
@@ -47,38 +65,42 @@ class _CartScreenState extends State<CartScreen> {
                       ? ErrorView(onReload: () {
                           cartProvider.getCartItems();
                         })
-                      : SingleChildScrollView(
-                          physics: BouncingScrollPhysics(),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 6.w, vertical: 3.w),
-                          child: Column(
-                            children: [
-                              _buildHeader(),
-                              _buildOrderSummary(cartProvider),
-                              2.height,
-                              _buildPaymentMethod(),
-                              2.height,
-                              Container(
-                                margin: EdgeInsets.only(bottom: 8.h),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: AppColors.primary),
-                                  borderRadius: BorderRadius.circular(2.w),
-                                ),
-                                child: ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: cartProvider.cartItems.length,
-                                  itemBuilder: (context, index) {
-                                    return CartItemWidget(
-                                        cartItem:
-                                            cartProvider.cartItems[index]);
-                                  },
-                                ),
+                      : value.cartModel!.data!.items!.isEmpty
+                          ? EmptyCart()
+                          : SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 6.w, vertical: 3.w),
+                              child: Column(
+                                children: [
+                                  _buildHeader(value),
+                                  _buildOrderSummary(cartProvider),
+                                  2.height,
+                                  _buildPaymentMethod(),
+                                  2.height,
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 8.h),
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppColors.primary),
+                                      borderRadius: BorderRadius.circular(2.w),
+                                    ),
+                                    child: ListView.builder(
+                                      padding: EdgeInsets.zero,
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: cartProvider
+                                          .cartModel?.data!.items!.length,
+                                      itemBuilder: (context, index) {
+                                        return CartItemWidget(
+                                            cartItem: cartProvider.cartModel!
+                                                .data!.items![index]);
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
             ),
           ],
         ),
@@ -86,21 +108,36 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(CartProvider value) {
+    final totalPrice =
+        double.tryParse(value.cartModel!.data!.totalPrice.toString()) ?? 0;
+    final cartMin = double.tryParse(
+            value.cartModel!.data!.items!.first.property!.cart_min ?? "0") ??
+        0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
-            color: Colors.green.withOpacity(.2),
-            borderRadius: BorderRadius.circular(5),
+            color: totalPrice <= cartMin
+                ? Colors.red.withOpacity(.2)
+                : Colors.green.withOpacity(.2),
+            borderRadius: BorderRadius.circular(1.w),
           ),
           child: Row(
             children: [
-              Icon(Icons.check_circle_outline_rounded, color: Colors.green),
+              Icon(
+                  totalPrice <= cartMin
+                      ? Icons.cancel_outlined
+                      : Icons.check_circle_outline_rounded,
+                  color: totalPrice <= cartMin ? AppColors.red : Colors.green),
               1.width,
-              Text("طلب صالح", style: TextStyle(fontSize: AppFonts.t4)),
+              Text(totalPrice <= cartMin ? "طلب غير صالح" : "طلب صالح",
+                  style: TextStyle(
+                      color:
+                          totalPrice <= cartMin ? AppColors.red : Colors.green,
+                      fontSize: AppFonts.t4)),
             ],
           ),
         ),
@@ -109,6 +146,13 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildOrderSummary(CartProvider cartProvider) {
+    final totalPrice =
+        double.tryParse(cartProvider.cartModel!.data!.totalPrice.toString()) ??
+            0;
+    final cartMin = double.tryParse(
+            cartProvider.cartModel!.data!.items!.first.property!.cart_min ??
+                "0") ??
+        0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -123,10 +167,22 @@ class _CartScreenState extends State<CartScreen> {
                     fontWeight: FontWeight.bold, fontSize: AppFonts.t2)),
           ],
         ),
+        if (totalPrice <= cartMin) 1.height,
+        if (totalPrice <= cartMin)
+          MinimumOrderWidget(
+            minimumOrder: double.tryParse(cartProvider
+                        .cartModel!.data!.items!.first.property!.cart_min ??
+                    "0") ??
+                0,
+            currentAmount: double.tryParse(
+                    cartProvider.cartModel!.data!.totalPrice.toString()) ??
+                0,
+          ),
         1.height,
-        _buildInfoRow("إجمالي الطلب", "${cartProvider.totalPrice} ج.م", true),
-        _buildInfoRow(
-            "عدد المنتجات", "${cartProvider.totalItems} منتجات", true),
+        _buildInfoRow(totalPrice <= cartMin, "إجمالي الطلب",
+            "${cartProvider.cartModel?.data!.totalPrice!} ج.م", true),
+        _buildInfoRow(totalPrice <= cartMin, "عدد المنتجات",
+            "${cartProvider.cartModel?.data!.items!.length} منتجات", true),
       ],
     );
   }
@@ -140,16 +196,19 @@ class _CartScreenState extends State<CartScreen> {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 5),
           decoration: BoxDecoration(
-            color: AppColors.bluebgColor,
+            color: AppColors.blueColor.withOpacity(.15),
             borderRadius: BorderRadius.circular(5),
           ),
-          child: Text("كاش", style: TextStyle(color: AppColors.primary)),
+          child: Text("كاش",
+              style: TextStyle(
+                  color: AppColors.primary, fontWeight: FontWeight.w500)),
         ),
       ],
     );
   }
 
-  Widget _buildInfoRow(String title, String value, bool hasCheck) {
+  Widget _buildInfoRow(
+      bool isActive, String title, String value, bool hasCheck) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 1.h),
       child: Row(
@@ -158,7 +217,12 @@ class _CartScreenState extends State<CartScreen> {
           Row(
             children: [
               if (hasCheck)
-                Icon(Icons.check_circle, color: Colors.green, size: 18),
+                Icon(
+                    isActive == true
+                        ? Icons.cancel_outlined
+                        : Icons.check_circle,
+                    color: isActive == true ? AppColors.red : Colors.green,
+                    size: 18),
               SizedBox(width: 5),
               Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
             ],
@@ -186,9 +250,9 @@ class _CartScreenState extends State<CartScreen> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text("${cartProvider.totalItems} منتجات",
+              Text("${cartProvider.cartModel?.data!.items!.length} منتجات",
                   style: TextStyle(color: Colors.white, fontSize: AppFonts.t4)),
-              Text("${cartProvider.totalPrice} ج.م",
+              Text("${cartProvider.cartModel?.data!.totalPrice} ج.م",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
