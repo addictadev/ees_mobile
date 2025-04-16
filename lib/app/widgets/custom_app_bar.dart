@@ -18,7 +18,7 @@ Widget CustomeAppBar({text}) {
         bottomRight: Radius.circular(4.w),
       ),
     ),
-    padding: EdgeInsets.only(top: 9.h),
+    padding: EdgeInsets.only(top: 5.h),
     child: Padding(
       padding: EdgeInsets.all(4.w),
       child: Row(
@@ -35,10 +35,12 @@ Widget CustomeAppBar({text}) {
               ),
             ),
           ),
-          CustomText(
-            text: text ?? '',
-            fontSize: 18.sp,
-            color: AppColors.white,
+          Flexible(
+            child: CustomText(
+                text: text ?? '',
+                fontSize: 18.sp,
+                color: AppColors.white,
+                maxLines: 2),
           ),
           SizedBox(width: 3.w),
         ],

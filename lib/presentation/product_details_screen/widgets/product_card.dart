@@ -1,12 +1,18 @@
 import 'package:ees/app/extensions/sized_box_extension.dart';
+import 'package:ees/app/images_preview/custom_cashed_network_image.dart';
 import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/widgets/app_button.dart';
+import 'package:ees/controllers/cart_controller.dart';
+import 'package:ees/models/products_home_data_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key});
+  final ProductData product;
+
+  const ProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +25,14 @@ class ProductCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ProductHeader(),
+          ProductHeader(
+            product: product,
+          ),
           Divider(color: Colors.grey[300], thickness: 1),
           SizedBox(height: 1.h),
-          ProductAttributes(),
+          ProductAttributes(
+            product: product,
+          ),
         ],
       ),
     );
@@ -30,29 +40,33 @@ class ProductCard extends StatelessWidget {
 }
 
 class ProductHeader extends StatelessWidget {
-  const ProductHeader({super.key});
+  final ProductData product;
+
+  const ProductHeader({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
+    final variant =
+        product.variants?.isNotEmpty == true ? product.variants!.first : null;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ClipRRect(
-          borderRadius: BorderRadius.circular(2.w),
-          child: Image.asset(
-            AppAssets.product1, // Replace with actual image URL
-            width: 20.w,
-            height: 20.w,
-            fit: BoxFit.contain,
-          ),
-        ),
+            borderRadius: BorderRadius.circular(2.w),
+            child: CustomCachedImage(
+              imageUrl: product.image ?? '',
+              width: 20.w,
+              height: 20.w,
+              fit: BoxFit.contain,
+            )),
         2.width,
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "لمبات سترا ليد فليلوط كروي وورم مصري - 3 وات",
+                product.name ?? '',
                 style: GoogleFonts.cairo(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
@@ -63,14 +77,14 @@ class ProductHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "كراتونة X50",
+                    product.package ?? '',
                     style: GoogleFonts.cairo(
                       fontSize: 15.sp,
                       color: Colors.grey[600],
                     ),
                   ),
                   Text(
-                    "ج.م 5.25",
+                    variant != null ? "${variant.price} ج.م" : "",
                     style: GoogleFonts.cairo(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
@@ -88,23 +102,89 @@ class ProductHeader extends StatelessWidget {
 }
 
 class ProductAttributes extends StatelessWidget {
-  const ProductAttributes({super.key});
+  final ProductData product;
+
+  const ProductAttributes({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
+    final variant =
+        product.variants?.isNotEmpty == true ? product.variants!.first : null;
+
+    List<Widget> attributes = [];
+
+    final shapeProperty = product.properties?.firstWhere(
+      (prop) =>
+          prop.name?.toLowerCase().contains('شكل') == true ||
+          prop.name?.toLowerCase().contains('shape') == true,
+      orElse: () => Categories(),
+    );
+
+    if (shapeProperty?.name != null) {
+      attributes.add(_AttributeItem(
+          icon: Icons.category, label: "الشكل", value: shapeProperty!.name!));
+    }
+
+    if (variant?.maxQuantity != null) {
+      attributes.add(_AttributeItem(
+          icon: Icons.inventory,
+          label: "أقصى كمية",
+          value: "${variant!.maxQuantity} ${product.package ?? ''}"));
+    }
+
+    if (variant?.minQuantity != null) {
+      attributes.add(_AttributeItem(
+          icon: Icons.inventory,
+          label: "أقل كمية",
+          value: "${variant!.minQuantity} ${product.package ?? ''}"));
+    }
+
+    final colorProperty = product.properties?.firstWhere(
+      (prop) =>
+          prop.name?.toLowerCase().contains('لون') == true ||
+          prop.name?.toLowerCase().contains('color') == true,
+      orElse: () => Categories(),
+    );
+
+    if (colorProperty?.name != null) {
+      attributes.add(_AttributeItem(
+          icon: Icons.format_paint,
+          label: "اللون",
+          value: colorProperty!.name!));
+    }
+
+    final brandCategory = product.categories?.firstWhere(
+      (cat) => cat.name != null,
+      orElse: () => Categories(),
+    );
+
+    if (brandCategory?.name != null) {
+      attributes.add(_AttributeItem(
+          icon: Icons.business,
+          label: "العلامة التجارية",
+          value: brandCategory!.name!));
+    }
+
+    if (product.properties != null) {
+      for (var prop in product.properties!) {
+        if ((prop.name?.toLowerCase().contains('شكل') == true) ||
+            (prop.name?.toLowerCase().contains('shape') == true) ||
+            (prop.name?.toLowerCase().contains('لون') == true) ||
+            (prop.name?.toLowerCase().contains('color') == true)) {
+          continue;
+        }
+
+        if (prop.name != null) {
+          attributes.add(_AttributeItem(
+              icon: Icons.info_outline, label: prop.name!, value: prop.name!));
+        }
+      }
+    }
+
     return Wrap(
       spacing: 2.w,
       runSpacing: 1.5.h,
-      children: [
-        _AttributeItem(icon: Icons.category, label: "الشكل", value: "دائري"),
-        _AttributeItem(
-            icon: Icons.inventory, label: "أقصى كمية", value: "3 كراتونة X50"),
-        _AttributeItem(
-            icon: Icons.inventory, label: "أقل كمية", value: "كراتونة X50"),
-        _AttributeItem(icon: Icons.format_paint, label: "اللون", value: "ابيض"),
-        _AttributeItem(
-            icon: Icons.business, label: "العلامة التجارية", value: "Siemens"),
-      ],
+      children: attributes,
     );
   }
 }
@@ -144,7 +224,9 @@ class _AttributeItem extends StatelessWidget {
 }
 
 class CompanyInfo extends StatelessWidget {
-  const CompanyInfo({super.key});
+  final ProductData product;
+
+  const CompanyInfo({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -251,14 +333,21 @@ class _CompanyDetailItem extends StatelessWidget {
 }
 
 class AddToCartButton extends StatelessWidget {
-  const AddToCartButton({super.key});
+  final ProductData product;
+
+  const AddToCartButton({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: AppButton(
-      "أضف إلى العربة",
-      width: 45.w,
-    ));
+      child: AppButton(
+        "أضف إلى العربة",
+        width: 45.w,
+        onTap: () {
+          context.read<CartProvider>().addToCart(product.id,
+              product.variants!.first.id, product.properties!.first.id);
+        },
+      ),
+    );
   }
 }

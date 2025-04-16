@@ -14,15 +14,12 @@ BuildContext getContext() {
 
 showCustomedToast(String message, ToastType toastType) {
   CherryToast.success(
-    title: Text(
-      toastType == ToastType.success ? "تم" : "خطأ",
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-    ),
-    displayCloseButton: true,
     description: Text(
       message,
-      style: const TextStyle(fontSize: 16),
+      style: const TextStyle(fontSize: 16, color: Colors.white),
     ),
+    displayCloseButton: false,
+    backgroundColor: toastType == ToastType.success ? Colors.green : Colors.red,
     animationType: toastType == ToastType.success
         ? AnimationType.fromBottom
         : AnimationType.fromTop,
@@ -32,8 +29,8 @@ showCustomedToast(String message, ToastType toastType) {
         toastType == ToastType.success ? Position.bottom : Position.top,
     borderRadius: 12,
     iconWidget: toastType == ToastType.success
-        ? const Icon(Icons.check_circle, color: Colors.green)
-        : const Icon(Icons.error_outline, color: Colors.red),
+        ? const Icon(Icons.check_circle, color: Colors.white)
+        : const Icon(Icons.error_outline, color: Colors.white),
   ).show(getContext());
 }
 // void showCustomedToast(String msg, ToastType type) async {

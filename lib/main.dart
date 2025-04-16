@@ -10,29 +10,13 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import 'app/utils/network/dio_helper.dart';
 
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   await Firebase.initializeApp();
-//   log("Handling a background message: ${message.data}");
-
-//   NotificationService().showLocalNotification(
-//     id: 1,
-//     title: message.notification?.title ?? "No Title",
-//     body: message.notification?.body ?? "No Body",
-//     payload: json.encode(message.data),
-//   );
-// }
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
 
   HttpOverrides.global = MyHttpOverrides();
 
   await initDependencyInjection();
-  //   await NotificationService().init();
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   await translator.init(
     localeType: LocalizationDefaultType.device,
     language: 'ar',

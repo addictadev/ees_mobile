@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ees/models/categoreisModel.dart';
+import 'package:ees/models/products_home_data_model.dart';
 import 'package:flutter/material.dart';
 
 import '../app/utils/network/dio_helper.dart';
@@ -13,6 +14,11 @@ class HomeProvider extends ChangeNotifier {
   int? selectedVendor;
   bool isLoadingCategories = false;
   bool isLoadingVendors = false;
+  bool isLoadingProducts = false;
+  ProductsHomeDataModel? productsModel;
+  int currentPage = 1;
+  bool hasMorePages = true;
+
   void setSelectedCategory(int index) {
     selectedCategory = index;
     selectedVendor = null;
@@ -24,7 +30,8 @@ class HomeProvider extends ChangeNotifier {
     selectedCategory = null;
     notifyListeners();
   }
-/////get All Categories////
+
+  /////get All Categories////
 
   CategoriesModel? categoriesModel;
   void getAllCategories() async {
@@ -54,7 +61,7 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
-////get all vendors///////
+  ////get all vendors///////
   VendorsModel? vendorModel;
   void getAlVendors() async {
     if (vendorModel != null) {
@@ -79,6 +86,60 @@ class HomeProvider extends ChangeNotifier {
       log(e.toString());
     } finally {
       isLoadingVendors = false;
+      notifyListeners();
+    }
+  }
+
+  /////get all products with pagination///////
+  Future<void> getAllHomeProducts({bool refresh = false}) async {
+    if (refresh) {
+      currentPage = 1;
+      hasMorePages = true;
+      productsModel = null;
+    }
+
+    if (!hasMorePages && !refresh) {
+      return;
+    }
+
+    try {
+      isLoadingProducts = true;
+      notifyListeners();
+
+      final response = await DioHelper.get(
+        EndPoints.getAllHomeProducts,
+        queryParameters: {
+          'page': currentPage,
+        },
+        requiresAuth: true,
+      );
+
+      if (response['status'] == true) {
+        final newProducts = ProductsHomeDataModel.fromJson(response);
+
+        if (productsModel == null) {
+          productsModel = newProducts;
+        } else {
+          productsModel!.data?.addAll(newProducts.data ?? []);
+          productsModel!.pagination = newProducts.pagination;
+        }
+
+        hasMorePages = newProducts.pagination?.currentPage !=
+            newProducts.pagination?.lastPage;
+        if (hasMorePages) {
+          currentPage++;
+        }
+
+        isLoadingProducts = false;
+        notifyListeners();
+      } else {
+        isLoadingProducts = false;
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.error);
+      }
+    } catch (e) {
+      isLoadingProducts = false;
+      log(e.toString());
       notifyListeners();
     }
   }

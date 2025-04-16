@@ -11,7 +11,14 @@
     <application
         android:label="EES"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="false"
+        android:hardwareAccelerated="true"
+        android:usesCleartextTraffic="true"
+        android:allowBackup="false">
+     <meta-data
+                android:name="io.flutter.embedding.android.EnableImpeller"
+                android:value="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
