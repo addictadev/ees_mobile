@@ -49,4 +49,27 @@ class CartProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  ////get cart items/////
+  ///
+  bool isLoadingGetCart = false;
+  Future<void> getCartItems() async {
+    try {
+      notifyListeners();
+      final response =
+          await DioHelper.get(EndPoints.getCart, requiresAuth: true);
+      if (response['success'] == true) {
+        isLoadingGetCart = false;
+        notifyListeners();
+      } else {
+        isLoadingGetCart = false;
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.error);
+      }
+    } catch (e) {
+      log(e.toString());
+      EasyLoading.dismiss();
+      notifyListeners();
+    }
+  }
 }

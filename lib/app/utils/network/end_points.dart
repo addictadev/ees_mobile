@@ -20,4 +20,5 @@ class EndPoints {
   static const String getAllSuppliers = "properties/get-all";
   static const String getAllHomeProducts = "products/get-all";
   static const String addToCart = "cart/add-to-cart";
+  static const String getCart = "cart/get-cart";
 }
