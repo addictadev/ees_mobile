@@ -34,6 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _scrollController.addListener(_onScroll);
     Future.microtask(() {
+      Provider.of<HomeProvider>(context, listen: false).selectedVendor = null;
+      Provider.of<HomeProvider>(context, listen: false).selectedCategory = null;
       Provider.of<HomeProvider>(context, listen: false).getAllCategories();
       Provider.of<HomeProvider>(context, listen: false).getAlVendors();
       Provider.of<HomeProvider>(context, listen: false)

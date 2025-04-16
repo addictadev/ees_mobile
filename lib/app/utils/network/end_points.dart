@@ -23,4 +23,7 @@ class EndPoints {
   static const String getCart = "cart/get-cart";
   static const String applyCopun = "coupon/apply-coupon";
   static const String createOrder = "order/store-order";
+  static const String incrementCartItem = "cart/increment-cart-quantity";
+  static const String decrementCartItem = "cart/decrement-cart-quantity";
+  static const String deleteCartItem = "cart/clear-cart";
 }

@@ -55,7 +55,7 @@ class AppButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(borderNum ?? 1.w),
               side: BorderSide(
                   color: borderColor,
-                  width: hasBorder ? 1 : 0,
+                  width: hasBorder ? 1.5 : 0,
                   style: hasBorder ? BorderStyle.solid : BorderStyle.none)),
         ),
         icon: const SizedBox(),
@@ -63,11 +63,12 @@ class AppButton extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (WithBackIcon ?? false) buttonIcon ?? const SizedBox(),
-            if (buttonIcon != null && WithBackIcon == false)
-              SizedBox(
-                width: 5.w,
-              ),
+            WithBackIcon == true
+                ? SizedBox(
+                    width: 5.w,
+                  )
+                : const SizedBox(),
+            if (WithBackIcon == false) buttonIcon ?? const SizedBox(),
             Center(
               child: CustomText(
                 text: title!,
@@ -77,12 +78,11 @@ class AppButton extends StatelessWidget {
                 fontSize: fontSize ?? 16.sp,
               ),
             ),
-            WithBackIcon == true
-                ? SizedBox(
-                    width: 5.w,
-                  )
-                : const SizedBox(),
-            if (WithBackIcon == false) buttonIcon ?? const SizedBox(),
+            if (WithBackIcon ?? false) buttonIcon ?? const SizedBox(),
+            if (buttonIcon != null && WithBackIcon == false)
+              SizedBox(
+                width: 5.w,
+              ),
           ],
         ),
       ),

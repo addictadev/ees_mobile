@@ -3,6 +3,8 @@ import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/utils/app_fonts.dart';
 import 'package:ees/app/widgets/app_text_field.dart';
+import 'package:ees/app/utils/error_view.dart';
+import 'package:ees/app/utils/show_toast.dart';
 import 'package:ees/app/widgets/style.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -11,12 +13,29 @@ import 'package:provider/provider.dart';
 
 import '../home_screen/widgets/homeAppBar.dart';
 import 'widgets/cart_item.dart';
+import 'widgets/empty_cart.dart';
+import 'widgets/minu_order_widget.dart';
 
 class CartScreen extends StatelessWidget {
   CartScreen({super.key});
 
   final TextEditingController copoun = TextEditingController();
   final TextEditingController notes = TextEditingController();
+class CartScreen extends StatefulWidget {
+  const CartScreen({super.key});
+
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      Provider.of<CartProvider>(context, listen: false).getCartItems();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,23 +133,109 @@ class CartScreen extends StatelessWidget {
         ],
       ),
     );
+// Initialize defaults
+    double totalPrice = 0;
+    double cartMin = 0;
+
+    final items = cartProvider.cartModel?.data?.items ?? [];
+
+    if (items.isNotEmpty) {
+      totalPrice = double.tryParse(
+              cartProvider.cartModel!.data!.totalPrice.toString()) ??
+          0;
+      cartMin = double.tryParse(items.first.property?.cart_min ?? "0") ?? 0;
+    }
+
+    return Consumer<CartProvider>(
+        builder: (BuildContext context, value, Widget? child) {
+      return Scaffold(
+        bottomSheet: cartProvider.cartModel!.data!.items!.isNotEmpty &&
+                totalPrice >= cartMin
+            ? _buildBottomBar(cartProvider)
+            : SizedBox(),
+        body: Column(
+          children: [
+            HomeAppBar(text: 'العربة', isHome: false),
+            Expanded(
+              child: value.isLoadingGetCart
+                  ? loadingIndicator
+                  : value.hasErrorGetCart
+                      ? ErrorView(onReload: () {
+                          cartProvider.getCartItems();
+                        })
+                      : value.cartModel!.data!.items!.isEmpty
+                          ? EmptyCart()
+                          : SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 6.w, vertical: 3.w),
+                              child: Column(
+                                children: [
+                                  _buildHeader(value),
+                                  _buildOrderSummary(cartProvider),
+                                  2.height,
+                                  _buildPaymentMethod(),
+                                  2.height,
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 8.h),
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: AppColors.primary),
+                                      borderRadius: BorderRadius.circular(2.w),
+                                    ),
+                                    child: ListView.builder(
+                                      padding: EdgeInsets.zero,
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: cartProvider
+                                          .cartModel?.data!.items!.length,
+                                      itemBuilder: (context, index) {
+                                        return CartItemWidget(
+                                            cartItem: cartProvider.cartModel!
+                                                .data!.items![index]);
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(CartProvider value) {
+    final totalPrice =
+        double.tryParse(value.cartModel!.data!.totalPrice.toString()) ?? 0;
+    final cartMin = double.tryParse(
+            value.cartModel!.data!.items!.first.property!.cart_min ?? "0") ??
+        0;
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
-            color: Colors.green.withOpacity(.2),
-            borderRadius: BorderRadius.circular(5),
+            color: totalPrice <= cartMin
+                ? Colors.red.withOpacity(.2)
+                : Colors.green.withOpacity(.2),
+            borderRadius: BorderRadius.circular(1.w),
           ),
           child: Row(
             children: [
-              Icon(Icons.check_circle_outline_rounded, color: Colors.green),
+              Icon(
+                  totalPrice <= cartMin
+                      ? Icons.cancel_outlined
+                      : Icons.check_circle_outline_rounded,
+                  color: totalPrice <= cartMin ? AppColors.red : Colors.green),
               1.width,
-              Text("طلب صالح", style: TextStyle(fontSize: AppFonts.t4)),
+              Text(totalPrice <= cartMin ? "طلب غير صالح" : "طلب صالح",
+                  style: TextStyle(
+                      color:
+                          totalPrice <= cartMin ? AppColors.red : Colors.green,
+                      fontSize: AppFonts.t4)),
             ],
           ),
         ),
@@ -139,6 +244,13 @@ class CartScreen extends StatelessWidget {
   }
 
   Widget _buildOrderSummary(CartProvider cartProvider) {
+    final totalPrice =
+        double.tryParse(cartProvider.cartModel!.data!.totalPrice.toString()) ??
+            0;
+    final cartMin = double.tryParse(
+            cartProvider.cartModel!.data!.items!.first.property!.cart_min ??
+                "0") ??
+        0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -153,10 +265,22 @@ class CartScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold, fontSize: AppFonts.t2)),
           ],
         ),
+        if (totalPrice <= cartMin) 1.height,
+        if (totalPrice <= cartMin)
+          MinimumOrderWidget(
+            minimumOrder: double.tryParse(cartProvider
+                        .cartModel!.data!.items!.first.property!.cart_min ??
+                    "0") ??
+                0,
+            currentAmount: double.tryParse(
+                    cartProvider.cartModel!.data!.totalPrice.toString()) ??
+                0,
+          ),
         1.height,
-        _buildInfoRow("إجمالي الطلب", "${cartProvider.totalPrice} ج.م", true),
-        _buildInfoRow(
-            "عدد المنتجات", "${cartProvider.totalItems} منتجات", true),
+        _buildInfoRow(totalPrice <= cartMin, "إجمالي الطلب",
+            "${cartProvider.cartModel?.data!.totalPrice!} ج.م", true),
+        _buildInfoRow(totalPrice <= cartMin, "عدد المنتجات",
+            "${cartProvider.cartModel?.data!.items!.length} منتجات", true),
       ],
     );
   }
@@ -170,16 +294,19 @@ class CartScreen extends StatelessWidget {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 5),
           decoration: BoxDecoration(
-            color: AppColors.bluebgColor,
+            color: AppColors.blueColor.withOpacity(.15),
             borderRadius: BorderRadius.circular(5),
           ),
-          child: Text("كاش", style: TextStyle(color: AppColors.primary)),
+          child: Text("كاش",
+              style: TextStyle(
+                  color: AppColors.primary, fontWeight: FontWeight.w500)),
         ),
       ],
     );
   }
 
-  Widget _buildInfoRow(String title, String value, bool hasCheck) {
+  Widget _buildInfoRow(
+      bool isActive, String title, String value, bool hasCheck) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 1.h),
       child: Row(
@@ -188,7 +315,12 @@ class CartScreen extends StatelessWidget {
           Row(
             children: [
               if (hasCheck)
-                Icon(Icons.check_circle, color: Colors.green, size: 18),
+                Icon(
+                    isActive == true
+                        ? Icons.cancel_outlined
+                        : Icons.check_circle,
+                    color: isActive == true ? AppColors.red : Colors.green,
+                    size: 18),
               SizedBox(width: 5),
               Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
             ],
@@ -245,6 +377,43 @@ class CartScreen extends StatelessWidget {
                     color: AppColors.primary)),
           ],
         ),
+    return Container(
+      height: 7.5.h,
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.w),
+      margin: EdgeInsets.only(left: 3.w, right: 3.w, bottom: 4.w),
+      decoration: BoxDecoration(
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(3.w),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text("${cartProvider.cartModel?.data!.items!.length} منتجات",
+                  style: TextStyle(color: Colors.white, fontSize: AppFonts.t4)),
+              Text("${cartProvider.cartModel?.data!.totalPrice} ج.م",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold)),
+            ],
+          ),
+          Spacer(),
+          Text("إذهب للدفع",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: AppFonts.t2)),
+          Spacer(),
+          Container(
+              padding: EdgeInsets.all(.5.w),
+              decoration:
+                  getBoxDecoration(fillColor: AppColors.white, radus: 1.w),
+              child: Icon(Icons.arrow_forward_ios_outlined,
+                  color: AppColors.primary)),
+        ],
       ),
     );
   }

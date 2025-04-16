@@ -1,43 +1,62 @@
 import 'package:ees/app/extensions/sized_box_extension.dart';
+import 'package:ees/app/images_preview/custom_cashed_network_image.dart';
 import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/utils/app_colors.dart';
+import 'package:ees/app/utils/show_toast.dart';
 import 'package:ees/app/widgets/app_button.dart';
 import 'package:ees/app/widgets/app_text.dart';
 import 'package:ees/app/widgets/style.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
-class CartItemWidget extends StatelessWidget {
-  final CartItem cartItem;
+import '../../../../controllers/cart_controller.dart';
+import '../../../../models/cart_model.dart';
+
+class CartItemWidget extends StatefulWidget {
+  final Items cartItem;
 
   const CartItemWidget({super.key, required this.cartItem});
 
   @override
+  State<CartItemWidget> createState() => _CartItemWidgetState();
+}
+
+class _CartItemWidgetState extends State<CartItemWidget> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 3.w, left: 4.w, right: 4.w),
+      padding: EdgeInsets.only(bottom: 3.w, left: 4.w, right: 4.w, top: 1.w),
       child: Column(
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset(
-                AppAssets.product1,
+              CustomCachedImage(
+                imageUrl: widget.cartItem.product!.image ?? '',
                 width: 20.w,
                 height: 20.w,
+                fit: BoxFit.cover,
               ),
               SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(cartItem.name,
+                    Text(widget.cartItem.product!.name ?? '',
                         style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text("كرتونة ${cartItem.cartonSize}"),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(" ${widget.cartItem.product!.package ?? ""}"),
+                        Text("${widget.cartItem.variant!.price} ج.م",
+                            style: TextStyle(color: Colors.blue)),
+                      ],
+                    ),
                   ],
                 ),
               ),
-              Text("${cartItem.price} ج.م",
-                  style: TextStyle(color: Colors.blue)),
             ],
           ),
           Row(
@@ -54,11 +73,21 @@ class CartItemWidget extends StatelessWidget {
                             Icons.add,
                             color: AppColors.white,
                           )),
-                      onTap: () {}),
+                      onTap: () {
+                        if (widget.cartItem.quantity! >=
+                            widget.cartItem.variant!.maxQuantity!) {
+                          showCustomedToast(
+                              'اقصي كمية للمنتج ${widget.cartItem.variant!.maxQuantity}',
+                              ToastType.error);
+                        } else {
+                          Provider.of<CartProvider>(context, listen: false)
+                              .incrementCartItem(widget.cartItem.id);
+                        }
+                      }),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8.w),
                     child: CustomText(
-                        text: cartItem.quantity.toString(),
+                        text: widget.cartItem.quantity.toString(),
                         color: AppColors.primary,
                         fontweight: FontWeight.bold),
                   ),
@@ -72,7 +101,17 @@ class CartItemWidget extends StatelessWidget {
                             Icons.remove,
                             color: AppColors.white,
                           )),
-                      onTap: () {}),
+                      onTap: () {
+                        if (widget.cartItem.quantity! <=
+                            widget.cartItem.variant!.minQuantity!.toInt()) {
+                          showCustomedToast(
+                              'اقل كمية للمنتج ${widget.cartItem.variant!.minQuantity}',
+                              ToastType.error);
+                        } else {
+                          Provider.of<CartProvider>(context, listen: false)
+                              .decrementCartItem(widget.cartItem.id);
+                        }
+                      }),
                 ],
               ),
               AppButton(
@@ -80,37 +119,42 @@ class CartItemWidget extends StatelessWidget {
                 buttonIcon: Padding(
                   padding: EdgeInsets.only(left: 3.w),
                   child: Icon(
-                    Icons.delete_outline_sharp,
+                    Iconsax.trash,
+                    size: 5.5.w,
                     color: AppColors.red,
                   ),
                 ),
-                width: 35.w,
+                width: 32.w,
                 hieght: 5.h,
+                fontSize: 3.5.w,
                 borderNum: 1.w,
-                borderColor: Colors.red.shade100,
+                borderColor: AppColors.red,
                 bgColor: AppColors.white,
-                titleColor: Colors.red,
+                titleColor: AppColors.red,
                 hasBorder: true,
+                onTap: () => Provider.of<CartProvider>(context, listen: false)
+                    .deleteCartItem(widget.cartItem.id),
               )
             ],
           ),
-          1.5.height,
-          Divider(),
+          Provider.of<CartProvider>(context, listen: false)
+                      .cartModel!
+                      .data!
+                      .items!
+                      .length ==
+                  1
+              ? SizedBox()
+              : 1.5.height,
+          Provider.of<CartProvider>(context, listen: false)
+                      .cartModel!
+                      .data!
+                      .items!
+                      .length ==
+                  1
+              ? SizedBox()
+              : Divider(),
         ],
       ),
     );
   }
-}
-
-class CartItem {
-  final String name;
-  final double price;
-  final int quantity;
-  final int cartonSize;
-
-  CartItem(
-      {required this.name,
-      required this.price,
-      required this.quantity,
-      required this.cartonSize});
 }

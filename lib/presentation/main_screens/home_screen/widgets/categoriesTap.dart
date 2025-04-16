@@ -55,6 +55,7 @@ class CategoryTabs extends StatelessWidget {
   ) {
     return GestureDetector(
       onTap: () {
+        // provider.selectedCategory = categoryId;
         provider.setSelectedCategory(index);
         Provider.of<HomeProvider>(context, listen: false)
             .getAllHomeProducts(refresh: true);
