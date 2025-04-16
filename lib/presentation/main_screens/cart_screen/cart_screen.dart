@@ -2,6 +2,7 @@ import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/utils/app_fonts.dart';
+import 'package:ees/app/widgets/app_text_field.dart';
 import 'package:ees/app/widgets/style.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -12,7 +13,10 @@ import '../home_screen/widgets/homeAppBar.dart';
 import 'widgets/cart_item.dart';
 
 class CartScreen extends StatelessWidget {
-  const CartScreen({super.key});
+  CartScreen({super.key});
+
+  final TextEditingController copoun = TextEditingController();
+  final TextEditingController notes = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +39,7 @@ class CartScreen extends StatelessWidget {
                   _buildPaymentMethod(),
                   2.height,
                   Container(
-                    margin: EdgeInsets.only(bottom: 8.h),
+                    margin: EdgeInsets.only(bottom: 1.h),
                     decoration: BoxDecoration(
                       border: Border.all(color: AppColors.primary),
                       borderRadius: BorderRadius.circular(2.w),
@@ -51,9 +55,61 @@ class CartScreen extends StatelessWidget {
                       },
                     ),
                   ),
+                  _promoCodeSection(),
+                  1.height,
+                  _noteSection(),
                 ],
               ),
             ),
+          ),
+          10.height
+        ],
+      ),
+    );
+  }
+
+  Widget _promoCodeSection() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.w),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: AppTextField(
+              hintText: "كود الخصم",
+              borderColor: AppColors.white,
+              controller: copoun,
+            ),
+          ),
+          Consumer<CartProvider>(
+            builder: (BuildContext context, value, Widget? child) {
+              return SizedBox(
+                height: 5.h,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await value.applyCopun(copoun.text);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                  ),
+                  child: Text(
+                    "تطبيق",
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: AppFonts.t4,
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -146,44 +202,68 @@ class CartScreen extends StatelessWidget {
   }
 
   Widget _buildBottomBar(CartProvider cartProvider) {
-    return Container(
-      height: 7.5.h,
-      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.w),
-      margin: EdgeInsets.only(left: 3.w, right: 3.w, bottom: 4.w),
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(3.w),
+    return InkWell(
+      onTap: () {
+        // cartProvider.createOrder(propertyId, notes.text);
+      },
+      child: Container(
+        height: 7.5.h,
+        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.w),
+        margin: EdgeInsets.only(left: 3.w, right: 3.w, bottom: 4.w),
+        decoration: BoxDecoration(
+          color: AppColors.primary,
+          borderRadius: BorderRadius.circular(3.w),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text("${cartProvider.totalItems} منتجات",
+                    style:
+                        TextStyle(color: Colors.white, fontSize: AppFonts.t4)),
+                Text("${cartProvider.totalPrice} ج.م",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold)),
+              ],
+            ),
+            Spacer(),
+            Text("إذهب للدفع",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: AppFonts.t2)),
+            Spacer(),
+            Container(
+                padding: EdgeInsets.all(.5.w),
+                decoration:
+                    getBoxDecoration(fillColor: AppColors.white, radus: 1.w),
+                child: Icon(Icons.arrow_forward_ios_outlined,
+                    color: AppColors.primary)),
+          ],
+        ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text("${cartProvider.totalItems} منتجات",
-                  style: TextStyle(color: Colors.white, fontSize: AppFonts.t4)),
-              Text("${cartProvider.totalPrice} ج.م",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Spacer(),
-          Text("إذهب للدفع",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppFonts.t2)),
-          Spacer(),
-          Container(
-              padding: EdgeInsets.all(.5.w),
-              decoration:
-                  getBoxDecoration(fillColor: AppColors.white, radus: 1.w),
-              child: Icon(Icons.arrow_forward_ios_outlined,
-                  color: AppColors.primary)),
-        ],
-      ),
+    );
+  }
+
+  _noteSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("ملاحظات الطلبيه",
+            style:
+                TextStyle(fontWeight: FontWeight.bold, fontSize: AppFonts.t2)),
+        1.height,
+        AppTextField(
+          hintText: "اضافة ملاحظات",
+          borderColor: AppColors.white,
+          lines: 4,
+          controller: notes,
+        )
+      ],
     );
   }
 }

@@ -88,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SliderWidget(),
-                            const CategoryTabs(),
+                            // const CategoryTabs(),
                             VendorList(),
                             const ProductGrid(),
                             if (value.isLoadingProducts &&

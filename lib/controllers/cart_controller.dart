@@ -1,8 +1,10 @@
 import 'dart:developer';
 
+import 'package:ees/app/navigation_services/navigation_manager.dart';
 import 'package:ees/app/utils/network/dio_helper.dart';
 import 'package:ees/app/utils/network/end_points.dart';
 import 'package:ees/app/utils/show_toast.dart';
+import 'package:ees/presentation/main_screens/main_nav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../presentation/main_screens/cart_screen/widgets/cart_item.dart';
@@ -38,6 +40,9 @@ class CartProvider with ChangeNotifier {
         EasyLoading.dismiss();
         notifyListeners();
         showCustomedToast(response['message'], ToastType.success);
+        NavigationManager.navigatToAndFinish(MainScreen(
+          currentIndex: 1,
+        ));
       } else {
         EasyLoading.dismiss();
         notifyListeners();
@@ -63,6 +68,58 @@ class CartProvider with ChangeNotifier {
         notifyListeners();
       } else {
         isLoadingGetCart = false;
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.error);
+      }
+    } catch (e) {
+      log(e.toString());
+      EasyLoading.dismiss();
+      notifyListeners();
+    }
+  }
+
+  Future<void> applyCopun(var code) async {
+    try {
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+      notifyListeners();
+      final response = await DioHelper.post(EndPoints.applyCopun,
+          data: {"code": code}, requiresAuth: true);
+      if (response['success'] == true) {
+        showCustomedToast(response['message'], ToastType.success);
+        notifyListeners();
+        EasyLoading.dismiss();
+      } else {
+        notifyListeners();
+        EasyLoading.dismiss();
+        showCustomedToast(response['message'], ToastType.error);
+      }
+    } catch (e) {
+      log(e.toString());
+      EasyLoading.dismiss();
+
+      notifyListeners();
+    }
+  }
+
+  Future<void> createOrder(var propertyId, note) async {
+    try {
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+      notifyListeners();
+      final response = await DioHelper.post(EndPoints.createOrder,
+          data: {"property_id": propertyId, "note": note}, requiresAuth: true);
+      if (response['success'] == true) {
+        EasyLoading.dismiss();
+        showCustomedToast(response['message'], ToastType.success);
+        notifyListeners();
+        NavigationManager.navigatToAndFinish(MainScreen(
+          currentIndex: 2,
+        ));
+      } else {
+        EasyLoading.dismiss();
         notifyListeners();
         showCustomedToast(response['message'], ToastType.error);
       }

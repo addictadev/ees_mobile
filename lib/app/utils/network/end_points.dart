@@ -21,4 +21,6 @@ class EndPoints {
   static const String getAllHomeProducts = "products/get-all";
   static const String addToCart = "cart/add-to-cart";
   static const String getCart = "cart/get-cart";
+  static const String applyCopun = "coupon/apply-coupon";
+  static const String createOrder = "order/store-order";
 }
