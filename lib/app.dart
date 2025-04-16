@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
                       GoogleFonts.cairoTextTheme(Theme.of(context).textTheme)),
               navigatorKey: NavigationManager.navigatorKey,
               localizationsDelegates: translator.delegates,
-              locale: translator.activeLocale,
+              locale: Locale('ar'),
               supportedLocales: translator.locals(),
               builder: (BuildContext context, Widget? child) {
                 child = EasyLoading.init()(context, child);

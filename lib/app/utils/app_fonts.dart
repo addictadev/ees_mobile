@@ -3,6 +3,7 @@ import 'package:sizer/sizer.dart';
 class AppFonts {
   static double h1 = 22.sp;
   static double h2 = 20.sp;
+  static double h3 = 19.sp;
   static double t1 = 18.sp;
   static double t2 = 16.sp;
   static double t3 = 14.sp;

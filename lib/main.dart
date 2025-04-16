@@ -35,6 +35,7 @@ Future<void> main() async {
   // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await translator.init(
     localeType: LocalizationDefaultType.device,
+    language: 'ar',
     languagesList: <String>['ar', 'en'],
     assetsDirectory: 'assets/translation/',
   );

@@ -9,13 +9,13 @@ class AppButton extends StatelessWidget {
       this.onTap,
       this.margin,
       this.buttonIcon,
-      this.color,
       this.borderNum,
       this.titleColor = Colors.white,
       this.hieght,
       this.width,
       this.fontSize,
       this.hasBorder = false,
+      this.WithBackIcon = false,
       this.borderRadius,
       this.titleWidget,
       this.borderColor = AppColors.btnColor,
@@ -27,7 +27,7 @@ class AppButton extends StatelessWidget {
   final String? title;
   final Widget? titleWidget;
   final Widget? buttonIcon;
-  final Color? color, titleColor;
+  final Color? titleColor;
   final double? width, hieght, fontSize, borderNum;
   final BorderRadius? borderRadius;
   final BoxBorder? border;
@@ -36,12 +36,13 @@ class AppButton extends StatelessWidget {
   final Color borderColor;
   final EdgeInsetsGeometry? margin;
   final Color bgColor;
+  final bool? WithBackIcon;
   final Color textColor;
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: margin ?? EdgeInsets.zero,
-      width: width ?? 150,
+      width: width ?? 100.w,
       height: hieght ?? 6.5.h,
       child: TextButton.icon(
         onPressed: isButtonDisabled ? null : onTap as void Function()?,
@@ -62,6 +63,11 @@ class AppButton extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            if (WithBackIcon ?? false) buttonIcon ?? const SizedBox(),
+            if (buttonIcon != null && WithBackIcon == false)
+              SizedBox(
+                width: 5.w,
+              ),
             Center(
               child: CustomText(
                 text: title!,
@@ -71,7 +77,12 @@ class AppButton extends StatelessWidget {
                 fontSize: fontSize ?? 16.sp,
               ),
             ),
-            buttonIcon ?? const SizedBox(),
+            WithBackIcon == true
+                ? SizedBox(
+                    width: 5.w,
+                  )
+                : const SizedBox(),
+            if (WithBackIcon == false) buttonIcon ?? const SizedBox(),
           ],
         ),
       ),

@@ -15,7 +15,7 @@ BuildContext getContext() {
 showCustomedToast(String message, ToastType toastType) {
   CherryToast.success(
     title: Text(
-      toastType == ToastType.success ? "Success" : "Error",
+      toastType == ToastType.success ? "تم" : "خطأ",
       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
     ),
     displayCloseButton: true,

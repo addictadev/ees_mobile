@@ -1,19 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
-import 'package:ees/app/images_preview/custom_asset_img.dart';
-import 'package:ees/app/utils/app_assets.dart';
-import 'package:ees/app/utils/show_toast.dart';
+import 'custom_asset_img.dart';
+import '../utils/app_assets.dart';
 import '../utils/network/end_points.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class CustomCachedImage extends StatelessWidget {
   const CustomCachedImage({
     super.key,
     required this.imageUrl,
-    this.width = 100.0,
-    this.height = 100.0,
+    this.width = 90.0,
+    this.height = 90.0,
     this.isBaseURL = false,
-    this.fit = BoxFit.cover,
+    this.fit = BoxFit.fill,
   });
   final String imageUrl;
   final double width;
@@ -28,13 +28,28 @@ class CustomCachedImage extends StatelessWidget {
       width: width,
       height: height,
       fit: fit,
-      placeholder: (context, url) => loadingIndicator,
+      placeholder: (context, url) => Skeletonizer(
+        enabled: true,
+        child: Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(2.w),
+            child: const CustomImageAsset(
+              assetName: AppAssets.logo,
+              fit: BoxFit.fill,
+              height: double.infinity,
+              width: double.infinity,
+            ),
+          ),
+        ),
+      ),
       errorWidget: (context, url, error) => Center(
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40.w),
-          child: const CustomImageAsset(
+          borderRadius: BorderRadius.circular(2.w),
+          child: CustomImageAsset(
             assetName: AppAssets.logo,
             fit: BoxFit.fill,
+            height: height,
+            width: width,
           ),
         ),
       ),

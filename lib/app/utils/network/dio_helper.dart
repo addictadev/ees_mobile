@@ -3,7 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:ees/app/utils/consts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import '../../../presentation/Auth_screens/login_screen/login_screen.dart';
 import '../../dependency_injection/get_it_injection.dart';
+import '../../navigation_services/navigation_manager.dart';
 import '../local/shared_pref_serv.dart';
 import '../show_toast.dart';
 import 'end_points.dart';
@@ -229,16 +231,16 @@ class DioHelper {
       message = 'The resource has moved. Please check the new URL.';
     } else {
       switch (response.statusCode) {
-        case 400:
-        case 422:
-          message = _extractErrorMessage(response.data) ?? 'Bad Request';
-          break;
+        // case 400:
+        // case 422:
+        //   message = _extractErrorMessage(response.data) ?? 'Bad Request';
+        //   break;
         case 401:
           getIt<SharedPreferencesService>().clear();
-        // NavigationManager.navigatToAndFinish(const LoginScreen());
-        case 403:
-          message = 'Unauthorized request';
-          break;
+          NavigationManager.navigatToAndFinish(const LoginScreen());
+        // case 403:
+        //   message = 'Unauthorized request';
+        //   break;
         case 500:
         case 502:
           message = 'Server error occurred!';

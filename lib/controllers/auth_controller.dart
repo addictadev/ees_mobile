@@ -1,13 +1,24 @@
 import 'dart:developer';
+import 'dart:io';
+import 'package:ees/app/navigation_services/navigation_manager.dart';
+import 'package:ees/app/utils/show_toast.dart';
+import 'package:ees/presentation/Auth_screens/login_screen/login_screen.dart';
+import 'package:ees/presentation/main_screens/main_nav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../app/dependency_injection/get_it_injection.dart';
 import '../app/utils/consts.dart';
+import 'package:image_cropper/image_cropper.dart';
 import '../app/utils/local/shared_pref_serv.dart';
 import '../app/utils/network/dio_helper.dart';
 import '../app/utils/network/end_points.dart';
+import '../models/cityModels.dart';
+import '../presentation/Auth_screens/otp_bottom_sheet.dart';
+import '../presentation/forget_pass_screen/resendPassScreen.dart';
+import 'package:dio/dio.dart';
 
 class AuthController with ChangeNotifier implements ReassembleHandler {
   IconData loginVisibilityIcon = Icons.visibility_off_outlined;
@@ -18,6 +29,29 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
   bool clientRegister1Visibality = true;
   bool olpassVisibality = true;
   bool clientRegister2Visibality = true;
+  int currentStep = 0;
+  bool isPasswordVisible = false;
+  bool isConfirmPasswordVisible = false;
+  final loginFormKey = GlobalKey<FormState>();
+  final forgetPassKey = GlobalKey<FormState>();
+  final newPassFormKey = GlobalKey<FormState>();
+  final registerFristFormKey = GlobalKey<FormState>();
+  final registerSecondFormKey = GlobalKey<FormState>();
+  void togglePasswordVisibility() {
+    isPasswordVisible = !isPasswordVisible;
+    notifyListeners();
+  }
+
+  void toggleConfirmPasswordVisibility() {
+    isConfirmPasswordVisible = !isConfirmPasswordVisible;
+    notifyListeners();
+  }
+
+  void changeStep(int index) {
+    currentStep = index;
+    notifyListeners();
+  }
+
   void loginChangeVisibility() {
     loginVisibality = !loginVisibality;
     loginVisibilityIcon = loginVisibality
@@ -36,93 +70,143 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
+  TextEditingController shopNameController = TextEditingController();
   TextEditingController locationReisterController = TextEditingController();
   TextEditingController phoneReisterController = TextEditingController();
+  TextEditingController delegate_nameController = TextEditingController();
+  TextEditingController otpCtn = TextEditingController();
+
   double? lat;
   double? lng;
+  String? cityId;
+  String? cityName;
+  String? shopType;
   final sharedPref = getIt<SharedPreferencesService>();
 
-  XFile? profileImage;
-  final bool _isLoadingRegister = false;
+  bool _isLoadingRegister = false;
   bool _isLoadingLogin = false;
   final bool _isLoadingGetProfileData = false;
   bool get isLoadingRegister => _isLoadingRegister;
   bool get isLoadingLogin => _isLoadingLogin;
   bool get isLoadingGetProfileData => _isLoadingGetProfileData;
+  final _picker = ImagePicker();
+  File? selectedImage;
 
-  bool isValidPhoneNumber(String phoneNumber) {
-    final RegExp regex = RegExp(r'^01\d{9}$');
+  Future<void> pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
+        maxWidth: 1080,
+        maxHeight: 1080,
+      );
 
-    phoneNumber = phoneNumber.replaceAll(RegExp(r'\s+|-'), '');
-
-    return regex.hasMatch(phoneNumber);
+      if (pickedFile != null) {
+        selectedImage = File(pickedFile.path);
+        notifyListeners();
+      } else {
+        showCustomedToast('Image pick canceled', ToastType.error);
+      }
+    } catch (e) {
+      log('Error picking image: $e');
+      showCustomedToast('Error selecting image', ToastType.error);
+    }
   }
 
-  bool isValidEmail(String email) {
-    final RegExp regex = RegExp(
-      r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$',
-      caseSensitive: false,
-      multiLine: false,
-    );
+  Future register() async {
+    try {
+      otpCtn.text = "";
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+      notifyListeners();
 
-    return regex.hasMatch(email);
+      final formData = FormData();
+
+      formData.fields.addAll([
+        MapEntry('name', userNameController.text),
+        MapEntry('phone_number', phoneReisterController.text),
+        MapEntry('password', passwordController.text),
+        MapEntry('password_confirmation', passwordController.text),
+        MapEntry('property_name', shopNameController.text),
+        MapEntry('address', locationReisterController.text),
+        MapEntry('property_type', shopType ?? ''),
+        MapEntry('delegate_name', delegate_nameController.text),
+        MapEntry('lat', '0.0'),
+        MapEntry('lng', '0.0'),
+        MapEntry('city_id', cityId.toString()),
+      ]);
+
+      if (selectedImage != null) {
+        formData.files.add(
+          MapEntry(
+            "logo",
+            await MultipartFile.fromFile(
+              selectedImage!.path,
+              filename: selectedImage!.path.split('/').last,
+            ),
+          ),
+        );
+      }
+      final response = await DioHelper.post(EndPoints.register,
+          data: formData, requiresAuth: false);
+
+      if (response['success'] == true) {
+        EasyLoading.dismiss();
+        notifyListeners();
+        showCustomedToast("otp is >>>>>> " + response['data']['otp'].toString(),
+            ToastType.success);
+        showModalBottomSheet(
+          context: NavigationManager.getContext(),
+          isScrollControlled: true,
+          // showDragHandle: true,
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          builder: (context) => VerificationBottomSheet(),
+        );
+      } else {
+        EasyLoading.dismiss();
+        notifyListeners();
+
+        showCustomedToast(response['message'], ToastType.error);
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      log(e.toString());
+    } finally {
+      EasyLoading.dismiss();
+      _isLoadingRegister = false;
+      notifyListeners();
+    }
   }
 
-  // Future<void> register() async {
-  //   try {
-  //     EasyLoading.show(
-  //       maskType: EasyLoadingMaskType.black,
-  //     );
-  //     notifyListeners();
-  //     final Map<String, dynamic> body = {
-  //       "fullname": userNameController.text,
-  //       "email": emailController.text,
-  //       "password": passwordController.text,
-  //       "location": locationReisterController.text,
-  //       "latitude": lat.toString(),
-  //       "longitude": lng.toString(),
-  //       "phone": phoneReisterController.text
-  //     };
-
-  //     final formData = FormData.fromMap(body);
-  //     if (profileImage != null) {
-  //       final File compressedImage =
-  //           await CompressionUtil.compressImage(profileImage!.path);
-
-  //       formData.files.add(MapEntry(
-  //         'image',
-  //         await MultipartFile.fromFile(
-  //           compressedImage.path,
-  //           filename: 'compressedImage.jpg',
-  //         ),
-  //       ));
-  //     }
-
-  //     log('body: $body');
-  //     final response = await DioHelper.post(EndPoints.register,
-  //         data: formData, requiresAuth: false);
-
-  //     if (response['status'] == true) {
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //       showCustomedToast(response['message'], ToastType.success);
-  //       NavigationManager.navigatToAndFinish(const LoginScreen());
-  //     } else {
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-
-  //       showCustomedToast(response['message'], ToastType.error);
-  //     }
-  //   } catch (e) {
-  //     EasyLoading.dismiss();
-  //     log(e.toString());
-  //   } finally {
-  //     EasyLoading.dismiss();
-  //     _isLoadingRegister = false;
-  //     notifyListeners();
-  //   }
-  // }
+  CityModel? cityModel;
+/////get All Citys////
+  void getAllCitys() async {
+    if (cityModel != null) {
+      return;
+    }
+    try {
+      notifyListeners();
+      final response =
+          await DioHelper.get(EndPoints.citys, requiresAuth: false);
+      if (response['success'] == true) {
+        cityModel = CityModel.fromJson(response);
+        notifyListeners();
+      } else {
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.error);
+      }
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      notifyListeners();
+    }
+  }
 
   Future<void> login() async {
     try {
@@ -131,51 +215,31 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
       );
       notifyListeners();
       final Map<String, dynamic> body = {
-        "email": emailController.text,
+        "phone_number": phoneReisterController.text,
         "password": passwordController.text
       };
       log('body: $body');
       final response = await DioHelper.post(EndPoints.login,
           data: body, requiresAuth: false);
-      if (response['status'] == true) {
+      if (response['success'] == true) {
         EasyLoading.dismiss();
         notifyListeners();
         // showCustomedToast(response['message'], ToastType.success);
         sharedPref.setSecureString(
-            ConstsClass.jwtTOKEN, response['data']['authorization']['token']);
-        sharedPref.setString(ConstsClass.fullNameKey,
-            response['data']['user'][0]['us_fullName'] ?? "");
+            ConstsClass.jwtTOKEN, response['data']['token']);
+        sharedPref.setString(
+            ConstsClass.fullNameKey, response['data']['user']['name'] ?? "");
         sharedPref.setInt(
-            ConstsClass.userIdKey, response['data']['user'][0]['us_id'] ?? "");
-        sharedPref.setString(ConstsClass.emailKey,
-            response['data']['user'][0]['us_email'] ?? "");
-        sharedPref.setString(ConstsClass.phoneKey,
-            response['data']['user'][0]['addresses'][0]['usa_phone'] ?? "");
-        sharedPref.setString(ConstsClass.addressKey,
-            response['data']['user'][0]['addresses'][0]['usa_location'] ?? "");
-        final selectedAddress =
-            response['data']['user'][0]['addresses'].firstWhere(
-          (element) => element['usa_isUsed'] == "1",
-          orElse: () => response['data']['user'][0]['addresses'].first,
-        );
-        log('selectedAddress $selectedAddress');
-        sharedPref.setString(ConstsClass.userAddressUsedId,
-            selectedAddress['usa_id'].toString() ?? "");
-        sharedPref.setString(ConstsClass.userLatitude,
-            selectedAddress['usa_latitude'].toString() ?? "");
-        sharedPref.setString(ConstsClass.userLongitude,
-            selectedAddress['usa_longitude'].toString() ?? "");
-        sharedPref.setString(ConstsClass.userImage,
-            'https://${response['data']['path']}/${response['data']['user'][0]['us_image']}');
+            ConstsClass.userIdKey, response['data']['user']['id'] ?? "");
+
         sharedPref.setBool(ConstsClass.isAuthorized, true);
 
-        // NavigationManager.navigatToAndFinish(const IndexedScreen());
-        // NavigationManager.navigatToAndFinish(const SellectTypeScreen());
+        NavigationManager.navigatToAndFinish(const MainScreen());
       } else {
         EasyLoading.dismiss();
         notifyListeners();
 
-        // showCustomedToast(response['message'], ToastType.error);
+        showCustomedToast(response['message'], ToastType.error);
       }
     } catch (e) {
       EasyLoading.dismiss();
@@ -187,398 +251,149 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
     }
   }
 
-  // Future<void> forgotPassword() async {
-  //   try {
-  //     EasyLoading.show(
-  //       maskType: EasyLoadingMaskType.black,
-  //     );
-  //     notifyListeners();
-  //     final Map<String, dynamic> body = {"email": emailController.text};
-  //     final response = await DioHelper.post(EndPoints.forgotPassword,
-  //         data: body, requiresAuth: false);
-  //     if (response['status'] == true) {
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //       showCustomedToast('${response['message']} ${response['data']['otp']}',
-  //           ToastType.success);
-  //       NavigationManager.navigatTo(const OtpScreen());
-  //     } else {
-  //       showCustomedToast(response['message'], ToastType.error);
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //     }
-  //   } catch (e) {
-  //     EasyLoading.dismiss();
-  //     notifyListeners();
-  //     log(e.toString());
-  //   }
-  // }
+  Future<void> verfiyOtpApi() async {
+    try {
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+      notifyListeners();
+      final formData = FormData();
 
-  // Future<void> verfiyOtpApi(var otp) async {
-  //   try {
-  //     EasyLoading.show(
-  //       maskType: EasyLoadingMaskType.black,
-  //     );
-  //     notifyListeners();
-  //     final Map<String, dynamic> body = {
-  //       "email": emailController.text,
-  //       "otp": otp
-  //     };
-  //     final response = await DioHelper.post(EndPoints.verfiyOtpApi,
-  //         data: body, requiresAuth: false);
-  //     if (response['status'] == true) {
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //       showCustomedToast(response['message'], ToastType.success);
-  //       NavigationManager.navigatTo(ResetPasswordScreen(
-  //         otp: otp,
-  //       ));
-  //     } else {
-  //       showCustomedToast(response['message'], ToastType.error);
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //     }
-  //   } catch (e) {
-  //     EasyLoading.dismiss();
-  //     notifyListeners();
-  //     log(e.toString());
-  //   }
-  // }
+      formData.fields.addAll([
+        MapEntry('otp', otpCtn.text),
+        MapEntry('phone_number', phoneReisterController.text),
+      ]);
 
-  // Future<void> resendOtpAgainApi() async {
-  //   try {
-  //     EasyLoading.show(
-  //       maskType: EasyLoadingMaskType.black,
-  //     );
-  //     notifyListeners();
-  //     final Map<String, dynamic> body = {
-  //       "email": emailController.text,
-  //     };
-  //     final response = await DioHelper.post(EndPoints.resendOtpAgainApi,
-  //         data: body, requiresAuth: false);
-  //     if (response['status'] == true) {
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //       showCustomedToast('${response['message']} ${response['data']['otp']}',
-  //           ToastType.success);
-  //     } else {
-  //       showCustomedToast(response['message'], ToastType.error);
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //     }
-  //   } catch (e) {
-  //     EasyLoading.dismiss();
-  //     notifyListeners();
-  //     log(e.toString());
-  //   }
-  // }
+      if (selectedImage != null) {
+        formData.files.add(
+          MapEntry(
+            "logo",
+            await MultipartFile.fromFile(
+              selectedImage!.path,
+              filename: selectedImage!.path.split('/').last,
+            ),
+          ),
+        );
+      }
+      final response = await DioHelper.post(EndPoints.verfiyOtpApi,
+          data: formData, requiresAuth: false);
+      if (response['success'] == true) {
+        otpCtn.clear();
+        currentStep = 0;
 
-  // Future<dynamic> resetPassword(var otp) async {
-  //   try {
-  //     EasyLoading.show(
-  //       maskType: EasyLoadingMaskType.black,
-  //     );
-  //     notifyListeners();
-  //     final Map<String, dynamic> body = {
-  //       "email": emailController.text,
-  //       "otp": otp,
-  //       "password": passwordController.text
-  //     };
-  //     final response = await DioHelper.post(EndPoints.resetPassword,
-  //         data: body, requiresAuth: false);
-  //     if (response['status'] == true) {
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //       showCustomedToast(response['message'], ToastType.success);
-  //       NavigationManager.navigatToAndFinish(const LoginScreen());
-  //     } else {
-  //       showCustomedToast(response['message'], ToastType.error);
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //     }
-  //   } catch (e) {
-  //     EasyLoading.dismiss();
-  //     notifyListeners();
-  //     log(e.toString());
-  //   }
-  // }
+        phoneReisterController.clear();
+        passwordController.clear();
+        cityName = null;
+        cityId = null;
+        shopNameController.clear();
+        locationReisterController.clear();
+        delegate_nameController.clear();
+        shopType = null;
 
-  // UserProfileModel? userProfileModel;
-  // Future<UserProfileModel?>? getUserProfileData() async {
-  //   try {
-  //     _isLoadingGetProfileData = true;
-  //     notifyListeners();
+        EasyLoading.dismiss();
+        showCustomedToast(response['message'], ToastType.success);
+        NavigationManager.navigatToAndFinish(LoginScreen());
+        notifyListeners();
+      } else {
+        showCustomedToast(response['message'], ToastType.error);
+        EasyLoading.dismiss();
+        notifyListeners();
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      notifyListeners();
+      log(e.toString());
+    }
+  }
 
-  //     final response =
-  //         await DioHelper.get(EndPoints.userProfile, requiresAuth: true);
-  //     if (response['status'] == true) {
-  //       _isLoadingGetProfileData = false;
-  //       notifyListeners();
-  //       userProfileModel = UserProfileModel.fromJson(response);
-  //       sharedPref.setString(ConstsClass.userImage,
-  //           'https://${response['data']['path']}/${response['data']['user'][0]['us_image']!.toString()}');
-  //       notifyListeners();
-  //     } else {
-  //       _isLoadingGetProfileData = false;
-  //       notifyListeners();
-  //     }
-  //     return userProfileModel;
-  //   } catch (e) {
-  //     _isLoadingGetProfileData = false;
-  //     notifyListeners();
-  //     log(e.toString());
-  //   }
-  //   return null;
-  // }
+  Future<void> forgetPassword() async {
+    try {
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+      notifyListeners();
+      final Map<String, dynamic> body = {
+        "phone_number": phoneReisterController.text,
+      };
+      final response = await DioHelper.post(EndPoints.forgotPassword,
+          data: body, requiresAuth: false);
+      if (response['success'] == true) {
+        EasyLoading.dismiss();
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.success);
+        NavigationManager.navigatTo(NewPasswordScreen());
+      } else {
+        showCustomedToast(response['message'], ToastType.error);
+        EasyLoading.dismiss();
+        notifyListeners();
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      notifyListeners();
+      log(e.toString());
+    }
+  }
+////resend otp/////
 
-  // Future<void> editUserProfile(File? image) async {
-  //   try {
-  //     EasyLoading.show(
-  //       maskType: EasyLoadingMaskType.black,
-  //     );
-  //     notifyListeners();
-  //     final Map<String, dynamic> body = {
-  //       "fullname": userNameController.text,
-  //       "email": emailController.text,
-  //       "phone": phoneReisterController.text,
-  //       "addressUsedId": sharedPref.getString(ConstsClass.userAddressUsedId),
-  //     };
-  //     final formData = FormData.fromMap(body);
-  //     if (image != null) {
-  //       final File compressedImage =
-  //           await CompressionUtil.compressImage(image.path);
+  Future<void> resendOtp() async {
+    try {
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+      notifyListeners();
+      final Map<String, dynamic> body = {
+        "phone_number": phoneReisterController.text,
+      };
+      final response = await DioHelper.post(EndPoints.resendOtpAgainApi,
+          data: body, requiresAuth: false);
+      if (response['success'] == true) {
+        EasyLoading.dismiss();
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.success);
+      } else {
+        showCustomedToast(response['message'], ToastType.error);
+        EasyLoading.dismiss();
+        notifyListeners();
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      notifyListeners();
+      log(e.toString());
+    }
+  }
 
-  //       formData.files.add(
-  //         MapEntry(
-  //           'image',
-  //           await MultipartFile.fromFile(
-  //             compressedImage.path,
-  //             filename: 'compressedImage.jpg',
-  //           ),
-  //         ),
-  //       );
-  //     }
-  //     log(body.toString());
-  //     final response = await DioHelper.post(EndPoints.editUserProfile,
-  //         data: formData, requiresAuth: true);
-  //     if (response['status'] == true) {
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //       showCustomedToast(response['message'], ToastType.success);
-  //       NavigationManager.navigatToAndFinish(const IndexedScreen());
-  //       getUserProfileData();
-  //     } else {
-  //       showCustomedToast(response['message'], ToastType.error);
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //     }
-  //   } catch (e) {
-  //     EasyLoading.dismiss();
-  //     notifyListeners();
-  //     log(e.toString());
-  //   }
-  // }
-
-  // Future<void> logout() async {
-  //   try {
-  //     EasyLoading.show(
-  //       maskType: EasyLoadingMaskType.black,
-  //     );
-  //     notifyListeners();
-  //     final response = await DioHelper.post(
-  //       EndPoints.logout,
-  //       requiresAuth: true,
-  //     );
-  //     if (response['status'] == true) {
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //       sharedPref.clear();
-  //       NavigationManager.navigatToAndFinish(const LoginScreen());
-  //     } else {
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //       showCustomedToast(response['message'], ToastType.error);
-  //     }
-  //   } catch (e) {
-  //     EasyLoading.dismiss();
-  //     notifyListeners();
-  //     log(e.toString());
-  //   }
-  // }
-
-  // Future<void> deleteAccount() async {
-  //   try {
-  //     EasyLoading.show(
-  //       maskType: EasyLoadingMaskType.black,
-  //     );
-  //     notifyListeners();
-  //     final response = await DioHelper.post(
-  //       EndPoints.deleteAcount,
-  //       requiresAuth: true,
-  //     );
-  //     if (response['status'] == true) {
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //       sharedPref.clear();
-  //       NavigationManager.navigatToAndFinish(const LoginScreen());
-  //     } else {
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //       showCustomedToast(response['message'], ToastType.error);
-  //     }
-  //   } catch (e) {
-  //     EasyLoading.dismiss();
-  //     notifyListeners();
-  //     log(e.toString());
-  //   }
-  // }
-
-  // Future<void> checkLocation() async {
-  //   try {
-  //     // Check if location services are enabled
-  //     final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //     if (!serviceEnabled) {
-  //       throw Exception("Location services are disabled. Please enable them.");
-  //     }
-
-  //     // Check and request location permissions
-  //     LocationPermission permission = await Geolocator.checkPermission();
-  //     if (permission == LocationPermission.denied) {
-  //       permission = await Geolocator.requestPermission();
-  //       if (permission == LocationPermission.denied) {
-  //         throw Exception("Location permissions are denied.");
-  //       }
-  //     }
-
-  //     if (permission == LocationPermission.deniedForever) {
-  //       throw Exception(
-  //           "Location permissions are permanently denied. Please enable them in device settings.");
-  //     }
-
-  //     // Get current location
-  //     final Position position = await Geolocator.getCurrentPosition(
-  //         desiredAccuracy: LocationAccuracy.high);
-
-  //     final double lat = position.latitude;
-  //     final double lng = position.longitude;
-
-  //     final Map<String, dynamic> body = {
-  //       "latitude": lat.toString(),
-  //       "longitude": lng.toString(),
-  //     };
-
-  //     // Make the API request
-  //     final response = await DioHelper.post(
-  //       EndPoints.checkLocation,
-  //       data: body,
-  //       requiresAuth: true,
-  //     );
-
-  //     if (response['status'] == true) {
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-
-  //       if (response['data']['addNewLocation'] == true) {
-  //         showCupertinoModalPopup(
-  //           barrierDismissible: false,
-  //           context: NavigationManager.getContext(),
-  //           builder: (BuildContext context) {
-  //             return Container(
-  //               padding: EdgeInsets.all(3.w),
-  //               decoration: const BoxDecoration(
-  //                 color: Colors.white,
-  //                 borderRadius:
-  //                     BorderRadius.vertical(top: Radius.circular(16.0)),
-  //               ),
-  //               child: Column(
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 children: [
-  //                   Text(
-  //                     isArabic() ? "تنبيه" : "Warning",
-  //                     style: translator.activeLanguageCode == "ar"
-  //                         ? GoogleFonts.almarai(
-  //                             color: AppColors.orangeColor,
-  //                             fontWeight: FontWeight.bold,
-  //                             fontSize: 18.sp,
-  //                           )
-  //                         : GoogleFonts.bellotaText(
-  //                             color: AppColors.orangeColor,
-  //                             fontWeight: FontWeight.bold,
-  //                             fontSize: 18.sp,
-  //                           ),
-  //                   ),
-  //                   SizedBox(height: 2.w),
-  //                   Text(
-  //                     isArabic()
-  //                         ? "هل تريد تحديث العنوان ؟"
-  //                         : "Are you sure you want to update the location?",
-  //                     textAlign: TextAlign.center,
-  //                     style: translator.activeLanguageCode == "ar"
-  //                         ? GoogleFonts.almarai(fontSize: 14.sp)
-  //                         : GoogleFonts.bellotaText(fontSize: 14.sp),
-  //                   ),
-  //                   2.height,
-  //                   Row(
-  //                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                     children: [
-  //                       AppButton(
-  //                         width: 30.w,
-  //                         hieght: 6.h,
-  //                         isArabic() ? 'إلغاء' : 'Cancel'.tr(),
-  //                         onTap: () {
-  //                           Navigator.of(context)
-  //                               .pop(); // Close the bottom sheet
-  //                         },
-  //                       ),
-  //                       AppButton(
-  //                         width: 30.w,
-  //                         hieght: 6.h,
-  //                         isArabic() ? 'تأكيد' : 'Confirm'.tr(),
-  //                         bgColor: AppColors.orangeColor,
-  //                         onTap: () {
-  //                           // Navigator.of(context).pop();
-  //                           Navigator.of(context).pop();
-  //                           NavigationManager.navigatTo(
-  //                               const AddAddressScreen());
-  //                         },
-  //                       ),
-  //                     ],
-  //                   ),
-  //                   1.5.height
-  //                 ],
-  //               ),
-  //             );
-  //           },
-  //         );
-  //       }
-  //     } else {
-  //       showCustomedToast(response['message'], ToastType.error);
-  //       EasyLoading.dismiss();
-  //       notifyListeners();
-  //     }
-  //   } catch (e) {
-  //     EasyLoading.dismiss();
-  //     notifyListeners();
-  //     log(e.toString());
-  //     showCustomedToast(
-  //       e.toString(),
-  //       ToastType.error,
-  //     );
-  //   }
-  // }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    userNameController.dispose();
-    phoneReisterController.dispose();
-    locationReisterController.dispose();
-    super.dispose();
+  ///////reset password/////
+  Future<void> resetPassword() async {
+    try {
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+      notifyListeners();
+      final Map<String, dynamic> body = {
+        "otp": otpCtn.text,
+        "phone_number": phoneReisterController.text,
+        "password": passwordController.text,
+        "password_confirmation": passwordController.text,
+      };
+      final response = await DioHelper.post(EndPoints.resetPassword,
+          data: body, requiresAuth: false);
+      if (response['success'] == true) {
+        EasyLoading.dismiss();
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.success);
+        NavigationManager.navigatTo(LoginScreen());
+      } else {
+        showCustomedToast(response['message'], ToastType.error);
+        EasyLoading.dismiss();
+        notifyListeners();
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      notifyListeners();
+      log(e.toString());
+    }
   }
 
   @override
-  void reassemble() {
-    log('Did hot-reload');
-  }
+  void reassemble() {}
 }

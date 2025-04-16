@@ -60,6 +60,12 @@ dependencies:
   pretty_dio_logger: ^1.4.0
   smooth_page_indicator: ^1.2.0+3
   auto_size_text: ^3.0.0
+  pin_code_fields: ^8.0.1
+  lucide_icons: ^0.257.0
+  iconsax: ^0.0.8
+  skeletonizer: ^1.4.3
+  image_picker: ^1.1.2
+  image_cropper: ^9.1.0
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,11 @@
 import 'package:ees/app/navigation_services/navigation_manager.dart';
 import 'package:ees/app/utils/app_assets.dart';
+import 'package:ees/presentation/main_screens/main_nav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import '../../app/dependency_injection/get_it_injection.dart';
+import '../../app/utils/consts.dart';
+import '../../app/utils/local/shared_pref_serv.dart';
 import 'onboarding_screen.dart'; // Import your OnboardingScreen
 
 class SplashScreen extends StatefulWidget {
@@ -33,11 +37,21 @@ class _SplashScreenState extends State<SplashScreen>
       });
 
     _controller.forward();
+    navigatToNextScreen();
+  }
 
-    // Navigate to OnboardingScreen after 5 seconds
-    Future.delayed(const Duration(seconds: 3), () {
-      NavigationManager.navigatToAndFinish(OnboardingScreen());
-    });
+  final sharedPref = getIt<SharedPreferencesService>();
+
+  Future<void> navigatToNextScreen() async {
+    if (sharedPref.getBool(ConstsClass.isAuthorized)) {
+      Future.delayed(const Duration(seconds: 3), () {
+        NavigationManager.navigatToAndFinish(MainScreen());
+      });
+    } else {
+      Future.delayed(const Duration(seconds: 3), () {
+        NavigationManager.navigatToAndFinish(OnboardingScreen());
+      });
+    }
   }
 
   @override

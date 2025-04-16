@@ -49,6 +49,8 @@
     "final_destination": "Your destination",
     "last_trip": "Last Trip",
     "error_filed_required": "This field is required.",
+    "Empty Field":"Empty Field",
+  "Enter a valid phone number that starts with 01 and is 11 digits":  "Enter a valid phone number that starts with 01 and is 11 digits",
     "rebook": "Rebook",
     "changeLanguage": "Choose your language",
     "changeLanguageHint": "Select your preferred language to use Dog Driver easily",

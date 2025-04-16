@@ -75,8 +75,7 @@ class _AppTextFieldState extends State<AppTextField> {
   Widget build(BuildContext context) {
     return Theme(
       data: ThemeData(
-          textTheme: 
-               GoogleFonts.cairoTextTheme(Theme.of(context).textTheme),
+          textTheme: GoogleFonts.cairoTextTheme(Theme.of(context).textTheme),
           textSelectionTheme: const TextSelectionThemeData(
             selectionColor: AppColors.primary,
             cursorColor: AppColors.primary,
@@ -90,7 +89,7 @@ class _AppTextFieldState extends State<AppTextField> {
           inputFormatters: widget.inputFormatters,
           focusNode: widget.focusNode,
           style: const TextStyle(
-            color: AppColors.primary,
+            color: AppColors.black,
           ),
           onTapOutside: (event) {
             FocusManager.instance.primaryFocus?.unfocus();
@@ -113,33 +112,32 @@ class _AppTextFieldState extends State<AppTextField> {
           onFieldSubmitted: widget.onFieldSubmitted,
           onEditingComplete: widget.onEditingComplete,
           decoration: InputDecoration(
+            errorMaxLines: 3,
             fillColor: widget.isFilled ? AppColors.grey : AppColors.white,
             filled: true,
             labelText: widget.labelText,
             labelStyle: const TextStyle(color: AppColors.grey),
             hintText: widget.hintText,
-            hintStyle: const TextStyle(
-              color: AppColors.grey,
-            ),
+            hintStyle: TextStyle(color: Colors.grey, fontSize: 15.sp),
             contentPadding: widget.contentPadding,
             focusedBorder: OutlineInputBorder(
               borderSide: const BorderSide(color: AppColors.primary, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(5.w)),
+              borderRadius: BorderRadius.all(Radius.circular(2.w)),
             ),
             border: OutlineInputBorder(
               borderSide: BorderSide(
                   color: widget.borderColor ?? AppColors.grey, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(5.w)),
+              borderRadius: BorderRadius.all(Radius.circular(2.w)),
             ),
             disabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
                   color: widget.borderColor ?? AppColors.primary, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(5.w)),
+              borderRadius: BorderRadius.all(Radius.circular(2.w)),
             ),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
                   color: widget.borderColor ?? AppColors.grey, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(5.w)),
+              borderRadius: BorderRadius.all(Radius.circular(2.w)),
             ),
             prefixIcon: widget.prefixIcon,
             suffixIcon: widget.trailingIcon ??
