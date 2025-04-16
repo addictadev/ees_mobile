@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/images_preview/custom_svg_img.dart';
 import 'package:ees/app/utils/app_assets.dart';
@@ -25,13 +27,36 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     Future.microtask(() {
       Provider.of<HomeProvider>(context, listen: false).getAllCategories();
       Provider.of<HomeProvider>(context, listen: false).getAlVendors();
+      Provider.of<HomeProvider>(context, listen: false)
+          .getAllHomeProducts(refresh: true);
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      final provider = Provider.of<HomeProvider>(context, listen: false);
+      if (provider.hasMorePages && !provider.isLoadingProducts) {
+        log("Loading more products...");
+        provider.getAllHomeProducts();
+      }
+    }
   }
 
   @override
@@ -52,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: value.isLoadingCategories || value.isLoadingVendors
                   ? loadingIndicator
                   : SingleChildScrollView(
+                      controller: _scrollController,
                       physics: BouncingScrollPhysics(),
                       child: Container(
                         padding: EdgeInsets.only(
@@ -65,6 +91,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             const CategoryTabs(),
                             VendorList(),
                             const ProductGrid(),
+                            if (value.isLoadingProducts &&
+                                value.productsModel != null)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 2.h),
+                                child: Center(
+                                  child: loadingIndicator,
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -175,6 +209,5 @@ class SliderWidget extends StatelessWidget {
 // Category Tabs
 
 // Product Grid
-
 
 // Category Provider
