@@ -12,7 +12,7 @@ class CategoryTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<HomeProvider>(context);
-    final categories = provider.categoriesModel!.data; // From backend
+    final categories = provider.categoriesModel?.data;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -243,7 +243,14 @@ class DioHelper {
         //   break;
         case 500:
         case 502:
-          message = 'Server error occurred!';
+          // Check for message in the response data
+          if (response.data is Map<String, dynamic> &&
+              response.data.containsKey('message') &&
+              response.data['message'] != null) {
+            message = response.data['message'];
+          } else {
+            message = 'Server error occurred!';
+          }
           break;
         default:
           if (response.data is String) {
@@ -255,26 +262,6 @@ class DioHelper {
     }
 
     return message;
-  }
-
-  static String? _extractErrorMessage(dynamic data) {
-    if (data is Map<String, dynamic>) {
-      if (data.containsKey('detail')) {
-        return data['detail'];
-      } else if (data.containsKey('errors')) {
-        final errors = data['errors'];
-        if (errors is List && errors.isNotEmpty) {
-          return errors.join(', ');
-        }
-      } else if (data.containsKey('message')) {
-        return data['message'];
-      }
-    } else if (data is String) {
-      return data;
-    } else if (data is List && data.isNotEmpty) {
-      return data[0].toString();
-    }
-    return null;
   }
 
   static void handleErrorTimeout() {
