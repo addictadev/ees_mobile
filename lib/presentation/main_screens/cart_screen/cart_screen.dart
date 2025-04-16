@@ -2,6 +2,8 @@ import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/utils/app_fonts.dart';
+import 'package:ees/app/utils/error_view.dart';
+import 'package:ees/app/utils/show_toast.dart';
 import 'package:ees/app/widgets/style.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -11,53 +13,77 @@ import 'package:provider/provider.dart';
 import '../home_screen/widgets/homeAppBar.dart';
 import 'widgets/cart_item.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
+
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      Provider.of<CartProvider>(context, listen: false).getCartItems();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
 
-    return Scaffold(
-      bottomSheet: _buildBottomBar(cartProvider),
-      body: Column(
-        children: [
-          HomeAppBar(text: 'العربة', isHome: false),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.w),
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  _buildOrderSummary(cartProvider),
-                  2.height,
-                  _buildPaymentMethod(),
-                  2.height,
-                  Container(
-                    margin: EdgeInsets.only(bottom: 8.h),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.primary),
-                      borderRadius: BorderRadius.circular(2.w),
-                    ),
-                    child: ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: cartProvider.cartItems.length,
-                      itemBuilder: (context, index) {
-                        return CartItemWidget(
-                            cartItem: cartProvider.cartItems[index]);
-                      },
-                    ),
-                  ),
-                ],
-              ),
+    return Consumer<CartProvider>(
+        builder: (BuildContext context, value, Widget? child) {
+      return Scaffold(
+        bottomSheet: _buildBottomBar(cartProvider),
+        body: Column(
+          children: [
+            HomeAppBar(text: 'العربة', isHome: false),
+            Expanded(
+              child: value.isLoadingGetCart
+                  ? loadingIndicator
+                  : value.hasErrorGetCart
+                      ? ErrorView(onReload: () {
+                          cartProvider.getCartItems();
+                        })
+                      : SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 6.w, vertical: 3.w),
+                          child: Column(
+                            children: [
+                              _buildHeader(),
+                              _buildOrderSummary(cartProvider),
+                              2.height,
+                              _buildPaymentMethod(),
+                              2.height,
+                              Container(
+                                margin: EdgeInsets.only(bottom: 8.h),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: AppColors.primary),
+                                  borderRadius: BorderRadius.circular(2.w),
+                                ),
+                                child: ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: cartProvider.cartItems.length,
+                                  itemBuilder: (context, index) {
+                                    return CartItemWidget(
+                                        cartItem:
+                                            cartProvider.cartItems[index]);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildHeader() {

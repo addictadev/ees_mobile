@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:ees/app/utils/network/dio_helper.dart';
 import 'package:ees/app/utils/network/end_points.dart';
 import 'package:ees/app/utils/show_toast.dart';
+import 'package:ees/models/cart_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../presentation/main_screens/cart_screen/widgets/cart_item.dart';
@@ -53,20 +54,28 @@ class CartProvider with ChangeNotifier {
   ////get cart items/////
   ///
   bool isLoadingGetCart = false;
+  bool hasErrorGetCart = false;
+  CartModel? cartModel;
   Future<void> getCartItems() async {
     try {
+      isLoadingGetCart = true;
+      hasErrorGetCart = false;
       notifyListeners();
       final response =
           await DioHelper.get(EndPoints.getCart, requiresAuth: true);
       if (response['success'] == true) {
+        cartModel = CartModel.fromJson(response);
         isLoadingGetCart = false;
+        hasErrorGetCart = false;
         notifyListeners();
       } else {
         isLoadingGetCart = false;
+        hasErrorGetCart = true;
         notifyListeners();
         showCustomedToast(response['message'], ToastType.error);
       }
     } catch (e) {
+      hasErrorGetCart = true;
       log(e.toString());
       EasyLoading.dismiss();
       notifyListeners();
