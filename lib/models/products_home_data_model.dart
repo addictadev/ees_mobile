@@ -154,8 +154,8 @@ class Pagination {
   int? perPage;
   int? total;
   int? lastPage;
-  Null nextPageUrl;
-  Null prevPageUrl;
+  dynamic nextPageUrl;
+  dynamic prevPageUrl;
 
   Pagination(
       {this.currentPage,

@@ -2,6 +2,7 @@ import 'package:ees/app/images_preview/custom_cashed_network_image.dart';
 import 'package:ees/app/navigation_services/navigation_manager.dart';
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/utils/app_fonts.dart';
+import 'package:ees/app/utils/show_toast.dart';
 import 'package:ees/app/widgets/app_text.dart';
 import 'package:ees/app/widgets/style.dart';
 import 'package:ees/controllers/home_controller.dart';
@@ -11,52 +12,35 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
-class ProductGrid extends StatefulWidget {
+class ProductGrid extends StatelessWidget {
   const ProductGrid({super.key});
-
-  @override
-  State<ProductGrid> createState() => _ProductGridState();
-}
-
-class _ProductGridState extends State<ProductGrid> {
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-    Future.microtask(() {
-      Provider.of<HomeProvider>(context, listen: false).getAllHomeProducts();
-    });
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent * 0.8) {
-      Provider.of<HomeProvider>(context, listen: false).getAllHomeProducts();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<HomeProvider>(
       builder: (context, provider, child) {
         if (provider.isLoadingProducts && provider.productsModel == null) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: loadingIndicator);
         }
 
         final products = provider.productsModel?.data ?? [];
 
+        if (products.isEmpty) {
+          return SizedBox(
+            height: 20.h,
+            child: Center(
+              child: Text(
+                "لا توجد منتجات متاحة",
+                style: TextStyle(fontSize: 16.sp),
+              ),
+            ),
+          );
+        }
+
         return GridView.builder(
-          controller: _scrollController,
           padding: EdgeInsets.only(bottom: 3.h),
-          physics: const NeverScrollableScrollPhysics(),
+          physics:
+              const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -64,24 +48,17 @@ class _ProductGridState extends State<ProductGrid> {
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
           ),
-          itemCount: products.length + (provider.hasMorePages ? 1 : 0),
+          itemCount: products.length,
           itemBuilder: (context, index) {
-            if (index == products.length) {
-              return const Center(
-                  child: CircularProgressIndicator(
-                color: AppColors.primary,
-              ));
-            }
-
             final product = products[index];
-            return _buildProductItem(product);
+            return _buildProductItem(context, product);
           },
         );
       },
     );
   }
 
-  Widget _buildProductItem(ProductData product) {
+  Widget _buildProductItem(BuildContext context, ProductData product) {
     return InkWell(
       onTap: () => NavigationManager.navigatTo(ProductDetailsScreen(
           productName: product.name ?? '', product: product)),
