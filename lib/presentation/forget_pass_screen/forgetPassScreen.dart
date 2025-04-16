@@ -1,6 +1,4 @@
 import 'package:ees/app/extensions/sized_box_extension.dart';
-import 'package:ees/app/navigation_services/navigation_manager.dart';
-import 'package:ees/presentation/forget_pass_screen/resendPassScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';

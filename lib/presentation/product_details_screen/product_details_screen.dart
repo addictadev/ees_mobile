@@ -1,6 +1,5 @@
 import 'package:ees/app/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
 
 import 'widgets/product_card.dart';
 

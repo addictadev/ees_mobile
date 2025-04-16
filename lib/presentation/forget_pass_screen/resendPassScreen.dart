@@ -6,7 +6,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../app/images_preview/custom_svg_img.dart';
 import '../../app/utils/app_assets.dart';
 import '../../app/utils/app_colors.dart';
 import '../../app/utils/app_fonts.dart';

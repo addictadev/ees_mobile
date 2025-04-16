@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:sizer/sizer.dart';
 import '../../app/images_preview/custom_svg_img.dart';
-import '../../app/navigation_services/navigation_manager.dart';
 import '../../app/dependency_injection/get_it_injection.dart';
 import '../../app/utils/local/shared_pref_serv.dart';
 import '../../app/utils/app_assets.dart';

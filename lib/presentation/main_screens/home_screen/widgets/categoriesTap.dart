@@ -1,4 +1,3 @@
-import 'package:ees/app/utils/app_fonts.dart';
 import 'package:ees/app/widgets/app_text.dart';
 import 'package:ees/controllers/home_controller.dart';
 import 'package:flutter/material.dart';

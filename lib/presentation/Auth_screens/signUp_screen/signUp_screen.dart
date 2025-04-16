@@ -1,9 +1,7 @@
 import 'dart:developer';
 
 import 'package:ees/app/extensions/sized_box_extension.dart';
-import 'package:ees/app/images_preview/custom_asset_img.dart';
 import 'package:ees/app/images_preview/custom_svg_img.dart';
-import 'package:ees/app/navigation_services/navigation_manager.dart';
 import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/utils/app_fonts.dart';
@@ -12,7 +10,6 @@ import 'package:ees/app/widgets/app_text_field.dart';
 import 'package:ees/app/widgets/custom_drop_down.dart';
 import 'package:ees/controllers/auth_controller.dart';
 import 'package:ees/models/cityModels.dart';
-import 'package:ees/presentation/Auth_screens/signUp_screen/select_location_screen.dart';
 import 'package:ees/presentation/Auth_screens/widget/custom_auth_appBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +22,6 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../app/utils/validators.dart';
 import '../../../app/widgets/app_button.dart';
-import '../otp_bottom_sheet.dart';
 import '../widget/steper.dart';
 
 class SignupScreen extends StatefulWidget {
