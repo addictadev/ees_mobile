@@ -10,7 +10,7 @@ import '../app/utils/show_toast.dart';
 import '../models/vendorsModel.dart';
 
 class HomeProvider extends ChangeNotifier {
-  int? selectedCategory;
+  int? selectedCategory = 0;
   int? selectedVendor;
   bool isLoadingCategories = false;
   bool isLoadingVendors = false;
@@ -32,7 +32,6 @@ class HomeProvider extends ChangeNotifier {
   }
 
   /////get All Categories////
-
   CategoriesModel? categoriesModel;
   void getAllCategories() async {
     if (categoriesModel != null) {
@@ -98,13 +97,15 @@ class HomeProvider extends ChangeNotifier {
       productsModel = null;
     }
 
-    if (!hasMorePages && !refresh) {
+    if (!hasMorePages && !refresh || isLoadingProducts) {
       return;
     }
 
     try {
       isLoadingProducts = true;
       notifyListeners();
+
+      log("Loading products page: $currentPage");
 
       final response = await DioHelper.get(
         EndPoints.getAllHomeProducts,
@@ -124,10 +125,17 @@ class HomeProvider extends ChangeNotifier {
           productsModel!.pagination = newProducts.pagination;
         }
 
-        hasMorePages = newProducts.pagination?.currentPage !=
-            newProducts.pagination?.lastPage;
-        if (hasMorePages) {
-          currentPage++;
+        if (newProducts.pagination != null) {
+          hasMorePages = newProducts.pagination?.currentPage != 
+                        newProducts.pagination?.lastPage;
+          
+          log("Pagination: Current=${newProducts.pagination?.currentPage}, Last=${newProducts.pagination?.lastPage}, HasMore=$hasMorePages");
+          
+          if (hasMorePages) {
+            currentPage++;
+          }
+        } else {
+          hasMorePages = false;
         }
 
         isLoadingProducts = false;
@@ -139,7 +147,7 @@ class HomeProvider extends ChangeNotifier {
       }
     } catch (e) {
       isLoadingProducts = false;
-      log(e.toString());
+      log("Error loading products: ${e.toString()}");
       notifyListeners();
     }
   }
