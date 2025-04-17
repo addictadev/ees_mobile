@@ -1,7 +1,10 @@
+import 'package:cherry_toast/resources/constants.dart';
 import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/images_preview/custom_cashed_network_image.dart';
 import 'package:ees/app/utils/app_assets.dart';
+import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/widgets/app_button.dart';
+import 'package:ees/app/widgets/app_text.dart';
 import 'package:ees/controllers/cart_controller.dart';
 import 'package:ees/models/cart_model.dart';
 import 'package:ees/models/products_home_data_model.dart';
@@ -243,6 +246,14 @@ class CompanyInfo extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          CustomText(
+              text: 'وصف المنتج',
+              color: AppColors.primary,
+              fontSize: 16.sp,
+              fontweight: FontWeight.w600),
+          1.height,
+          CustomText(text: product.description ?? '', fontSize: 15.sp),
+          SizedBox(height: 2.h),
           _CompanyHeader(product),
           _CompanyDetails(product),
           SizedBox(height: 2.h),
@@ -266,12 +277,24 @@ Widget _CompanyHeader(ProductData? product) {
         ),
       ),
       SizedBox(width: 3.w),
-      Text(
-        product?.properties![0].name ?? "",
-        style: GoogleFonts.cairo(
-          fontSize: 15.sp,
-          fontWeight: FontWeight.bold,
-        ),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            product?.properties![0].name ?? "",
+            style: GoogleFonts.cairo(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          if (product!.properties![0].cart_min != null)
+            CustomText(
+                padding: EdgeInsets.only(top: 1.h),
+                text:
+                    'اقل كمية للطلبية :  ${product.properties![0].cart_min! + " " + product.package!}',
+                fontSize: 14.sp),
+        ],
       ),
     ],
   );

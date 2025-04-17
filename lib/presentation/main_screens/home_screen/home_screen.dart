@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/images_preview/custom_svg_img.dart';
+import 'package:ees/app/navigation_services/navigation_manager.dart';
 import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/utils/app_fonts.dart';
@@ -16,6 +17,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
+import '../search_screen/search_screen.dart';
 import 'widgets/categoriesTap.dart';
 import 'widgets/homeAppBar.dart';
 import 'widgets/vendorsTap.dart';
@@ -35,6 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _scrollController.addListener(_onScroll);
     Future.microtask(() {
+      Provider.of<HomeProvider>(context, listen: false)
+          .searchController
+          .clear();
       Provider.of<HomeProvider>(context, listen: false).selectedVendor = null;
       Provider.of<HomeProvider>(context, listen: false).selectedCategory = null;
       Provider.of<HomeProvider>(context, listen: false).getAllCategories();
@@ -77,34 +82,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   AppTextField(
-                      width: 75.w,
-                      search: true,
-                      hintText: 'ابحث عن منتجات أو علامة تجارية',
-                      borderColor: AppColors.white,
-                      controller:
-                          Provider.of<HomeProvider>(context, listen: false)
-                              .searchController,
-                      onFieldSubmitted: (p0) =>
-                          Provider.of<HomeProvider>(context, listen: false)
-                              .getAllHomeProducts(),
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.all(2.w),
-                        child: CustomSvgImage(assetName: AppAssets.searchIcon),
-                      ),
-                      suffixIcon:
-                          Provider.of<HomeProvider>(context, listen: false)
-                                  .searchController
-                                  .text
-                                  .isNotEmpty
-                              ? Icons.close
-                              : null,
-                      suffixIconOnTap: () {
-                        Provider.of<HomeProvider>(context, listen: false)
-                            .searchController
-                            .clear();
-                        Provider.of<HomeProvider>(context, listen: false)
-                            .getAllHomeProducts();
-                      }),
+                    width: 75.w,
+                    search: true,
+                    hintText: 'ابحث عن منتجات أو علامة تجارية',
+                    borderColor: AppColors.white,
+                    controller: value.searchController,
+                    onTap: () => NavigationManager.navigatTo(SearchScreen()),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(2.w),
+                      child: CustomSvgImage(assetName: AppAssets.searchIcon),
+                    ),
+                  ),
                   Container(
                     height: 7.h,
                     width: 7.h,

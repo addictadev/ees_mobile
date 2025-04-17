@@ -75,12 +75,13 @@ class _AppTextFieldState extends State<AppTextField> {
   Widget build(BuildContext context) {
     return Theme(
       data: ThemeData(
-          textTheme: GoogleFonts.cairoTextTheme(Theme.of(context).textTheme),
-          textSelectionTheme: const TextSelectionThemeData(
-            selectionColor: AppColors.primary,
-            cursorColor: AppColors.primary,
-            selectionHandleColor: AppColors.primary,
-          )),
+        textTheme: GoogleFonts.cairoTextTheme(Theme.of(context).textTheme),
+        textSelectionTheme: const TextSelectionThemeData(
+          selectionColor: AppColors.primary,
+          cursorColor: AppColors.primary,
+          selectionHandleColor: AppColors.primary,
+        ),
+      ),
       child: Container(
         width: widget.width ?? 100.w,
         padding: EdgeInsets.only(top: 3.w),
@@ -88,9 +89,7 @@ class _AppTextFieldState extends State<AppTextField> {
           obscureText: widget.obscureText,
           inputFormatters: widget.inputFormatters,
           focusNode: widget.focusNode,
-          style: const TextStyle(
-            color: AppColors.black,
-          ),
+          style: const TextStyle(color: AppColors.black),
           onTapOutside: (event) {
             FocusManager.instance.primaryFocus?.unfocus();
           },
@@ -107,9 +106,19 @@ class _AppTextFieldState extends State<AppTextField> {
           maxLines: widget.lines ?? 1,
           textAlignVertical: TextAlignVertical.center,
           textAlign: TextAlign.start,
-          onChanged: widget.onChanged,
+          onChanged: (value) {
+            setState(() {}); // Refresh to show/hide suffix icon
+            if (widget.onChanged != null) {
+              widget.onChanged!(value);
+            }
+          },
           onSaved: widget.onSaved,
-          onFieldSubmitted: widget.onFieldSubmitted,
+          onFieldSubmitted: (value) {
+            if (widget.onFieldSubmitted != null) {
+              widget.onFieldSubmitted!(value);
+            }
+            FocusManager.instance.primaryFocus?.unfocus(); // Dismiss keyboard
+          },
           onEditingComplete: widget.onEditingComplete,
           decoration: InputDecoration(
             errorMaxLines: 3,
@@ -140,14 +149,19 @@ class _AppTextFieldState extends State<AppTextField> {
               borderRadius: BorderRadius.all(Radius.circular(2.w)),
             ),
             prefixIcon: widget.prefixIcon,
-            suffixIcon: widget.trailingIcon ??
-                IconButton(
-                    onPressed: widget.suffixIconOnTap,
-                    icon: Icon(
-                      widget.suffixIcon,
-                      color: widget.suffixColor,
-                      size: widget.suffixSize,
-                    )),
+            suffixIcon: widget.controller!.text.isNotEmpty
+                ? IconButton(
+                    onPressed: () {
+                      widget.controller!.clear();
+                      setState(() {}); // Refresh to hide suffix icon
+                      if (widget.suffixIconOnTap != null) {
+                        widget.suffixIconOnTap!();
+                      }
+                    },
+                    icon: Icon(Icons.close,
+                        color: widget.suffixColor, size: widget.suffixSize),
+                  )
+                : null,
           ),
         ),
       ),
