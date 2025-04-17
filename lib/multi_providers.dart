@@ -2,6 +2,7 @@ import 'package:ees/controllers/home_controller.dart';
 import 'package:provider/provider.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/cart_controller.dart';
+import 'controllers/orders_controller.dart';
 
 class MultiProviders {
   static List<ChangeNotifierProvider> providers() {
@@ -15,6 +16,8 @@ class MultiProviders {
       ChangeNotifierProvider<HomeProvider>(
         create: (context) => HomeProvider(),
       ),
+      ChangeNotifierProvider<OrdersController>(
+          create: (context) => OrdersController())
     ];
   }
 }

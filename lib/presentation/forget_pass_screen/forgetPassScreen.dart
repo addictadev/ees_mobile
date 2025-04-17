@@ -21,6 +21,8 @@ class ForgetPassScreen extends StatefulWidget {
 }
 
 class _ForgetPassScreenState extends State<ForgetPassScreen> {
+  final GlobalKey<FormState> forgetPassKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +35,7 @@ class _ForgetPassScreenState extends State<ForgetPassScreen> {
                 child: Consumer<AuthController>(
                     builder: (BuildContext context, value, Widget? child) {
                   return Form(
-                      key: value.forgetPassKey,
+                      key: forgetPassKey,
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -70,8 +72,7 @@ class _ForgetPassScreenState extends State<ForgetPassScreen> {
                             ),
                             4.height,
                             AppButton('تآكيد', onTap: () {
-                              if (value.forgetPassKey.currentState!
-                                  .validate()) {
+                              if (forgetPassKey.currentState!.validate()) {
                                 value.forgetPassword();
                               }
                             }),

@@ -12,6 +12,7 @@ import 'package:ees/app/widgets/style.dart';
 import 'package:ees/controllers/home_controller.dart';
 import 'package:ees/presentation/main_screens/home_screen/widgets/products_home_grids.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -72,7 +73,53 @@ class _HomeScreenState extends State<HomeScreen> {
             HomeAppBar(),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 3.w),
-              child: SearchAmdFilterWidget(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AppTextField(
+                      width: 75.w,
+                      search: true,
+                      hintText: 'ابحث عن منتجات أو علامة تجارية',
+                      borderColor: AppColors.white,
+                      controller:
+                          Provider.of<HomeProvider>(context, listen: false)
+                              .searchController,
+                      onFieldSubmitted: (p0) =>
+                          Provider.of<HomeProvider>(context, listen: false)
+                              .getAllHomeProducts(),
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.all(2.w),
+                        child: CustomSvgImage(assetName: AppAssets.searchIcon),
+                      ),
+                      suffixIcon:
+                          Provider.of<HomeProvider>(context, listen: false)
+                                  .searchController
+                                  .text
+                                  .isNotEmpty
+                              ? Icons.close
+                              : null,
+                      suffixIconOnTap: () {
+                        Provider.of<HomeProvider>(context, listen: false)
+                            .searchController
+                            .clear();
+                        Provider.of<HomeProvider>(context, listen: false)
+                            .getAllHomeProducts();
+                      }),
+                  Container(
+                    height: 7.h,
+                    width: 7.h,
+                    margin: EdgeInsets.only(top: 3.w),
+                    decoration: getBoxDecoration(),
+                    child: Padding(
+                      padding: EdgeInsets.all(4.w),
+                      child: CustomSvgImage(
+                        assetName: AppAssets.filterIcon,
+                        height: 2.w,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
             2.height,
             Expanded(
@@ -113,35 +160,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Widget SearchAmdFilterWidget() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      AppTextField(
-        width: 75.w,
-        hintText: 'ابحث عن منتجات أو علامة تجارية',
-        borderColor: AppColors.white,
-        prefixIcon: Padding(
-          padding: EdgeInsets.all(2.w),
-          child: CustomSvgImage(assetName: AppAssets.searchIcon),
-        ),
-      ),
-      Container(
-        height: 7.h,
-        width: 7.h,
-        margin: EdgeInsets.only(top: 3.w),
-        decoration: getBoxDecoration(),
-        child: Padding(
-          padding: EdgeInsets.all(4.w),
-          child: CustomSvgImage(
-            assetName: AppAssets.filterIcon,
-            height: 2.w,
-          ),
-        ),
-      )
-    ],
-  );
-}
+// Widget SearchAmdFilterWidget(context) {
+//   return
+
+// }
 
 // Home Screen
 // Slider Widget

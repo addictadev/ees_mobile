@@ -281,11 +281,12 @@ Widget _CompanyDetails(ProductData product) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      _CompanyDetailItem(
-        icon: Iconsax.wallet,
-        label: "حد أدنى للطلبية",
-        value: "${product.properties![0].name} ج.م",
-      ),
+      if (product.properties![0].cart_min != null)
+        _CompanyDetailItem(
+          icon: Iconsax.wallet,
+          label: "حد أدنى للطلبية",
+          value: "${product.properties![0].cart_min} ج.م",
+        ),
     ],
   );
 }

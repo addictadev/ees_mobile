@@ -22,13 +22,14 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
     return Scaffold(
       body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 4.w),
           child: Consumer<AuthController>(
               builder: (BuildContext context, value, Widget? child) {
             return Form(
-              key: value.loginFormKey,
+              key: loginFormKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -110,7 +111,7 @@ class LoginScreen extends StatelessWidget {
                   ]),
                   3.height,
                   AppButton('تسجيل الدخول', onTap: () {
-                    if (value.loginFormKey.currentState!.validate()) {
+                    if (loginFormKey.currentState!.validate()) {
                       value.login();
                     }
                   }),

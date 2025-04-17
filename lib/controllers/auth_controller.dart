@@ -30,11 +30,7 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
   int currentStep = 0;
   bool isPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
-  final loginFormKey = GlobalKey<FormState>();
-  final forgetPassKey = GlobalKey<FormState>();
-  final newPassFormKey = GlobalKey<FormState>();
-  final registerFristFormKey = GlobalKey<FormState>();
-  final registerSecondFormKey = GlobalKey<FormState>();
+
   void togglePasswordVisibility() {
     isPasswordVisible = !isPasswordVisible;
     notifyListeners();
@@ -278,7 +274,6 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
       if (response['success'] == true) {
         otpCtn.clear();
         currentStep = 0;
-
         phoneReisterController.clear();
         passwordController.clear();
         cityName = null;
@@ -287,7 +282,6 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
         locationReisterController.clear();
         delegate_nameController.clear();
         shopType = null;
-
         EasyLoading.dismiss();
         showCustomedToast(response['message'], ToastType.success);
         NavigationManager.navigatToAndFinish(LoginScreen());

@@ -25,6 +25,8 @@ class CartModel {
 class CartItem {
   List<Items>? items;
   int? totalPrice;
+  dynamic discount;
+  dynamic totalAfterDiscount;
 
   CartItem({this.items, this.totalPrice});
 
@@ -35,7 +37,9 @@ class CartItem {
         items!.add(Items.fromJson(v));
       });
     }
-    totalPrice = json['total_price'];
+    totalPrice = json['total_before_coupon'];
+    discount = json['discount'];
+    totalAfterDiscount = json['total_after_coupon'];
   }
 
   Map<String, dynamic> toJson() {
@@ -43,7 +47,9 @@ class CartItem {
     if (items != null) {
       data['items'] = items!.map((v) => v.toJson()).toList();
     }
-    data['total_price'] = totalPrice;
+    data['total_before_coupon'] = totalPrice;
+    data['discount'] = discount;
+    data['total_after_coupon'] = totalAfterDiscount;
     return data;
   }
 }

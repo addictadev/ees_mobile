@@ -61,6 +61,8 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
     super.dispose();
   }
 
+  final GlobalKey<FormState> newPassFormKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +75,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 child: Consumer<AuthController>(
                     builder: (BuildContext context, value, Widget? child) {
                   return Form(
-                      key: value.newPassFormKey,
+                      key: newPassFormKey,
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -166,8 +168,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                             ),
                             4.height,
                             AppButton('تآكيد', onTap: () {
-                              if (value.forgetPassKey.currentState!
-                                  .validate()) {
+                              if (newPassFormKey.currentState!.validate()) {
                                 value.resetPassword();
                               }
                             }),

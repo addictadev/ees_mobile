@@ -109,6 +109,7 @@ class Categories {
   int? id;
   String? name;
   String? logo;
+  String? cart_min;
 
   Categories({this.id, this.name});
 
@@ -116,6 +117,7 @@ class Categories {
     id = json['id'];
     name = json['name'];
     logo = json['logo'];
+    cart_min = json['cart_min'];
   }
 
   Map<String, dynamic> toJson() {
@@ -123,6 +125,7 @@ class Categories {
     data['id'] = id;
     data['name'] = name;
     data['logo'] = logo;
+    data['cart_min'] = cart_min;
     return data;
   }
 }

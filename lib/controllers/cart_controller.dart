@@ -167,9 +167,10 @@ class CartProvider with ChangeNotifier {
       notifyListeners();
       final response = await DioHelper.post(EndPoints.applyCoupon,
           data: {"code": copounCtn.text}, requiresAuth: true);
-      if (response['success'] == true) {
+      if (response['status'] == true) {
         showCustomedToast(response['message'], ToastType.success);
         notifyListeners();
+        copounCtn.clear();
         getCartItems();
         EasyLoading.dismiss();
       } else {
@@ -180,7 +181,6 @@ class CartProvider with ChangeNotifier {
     } catch (e) {
       log(e.toString());
       EasyLoading.dismiss();
-
       notifyListeners();
     }
   }

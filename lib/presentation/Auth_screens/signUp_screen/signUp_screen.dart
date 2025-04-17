@@ -87,6 +87,8 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
+  final GlobalKey<FormState> registerFristFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> registerSecondFormKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthController>(
@@ -110,7 +112,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   children: [
                     if (value.currentStep == 0)
                       Form(
-                        key: value.registerFristFormKey,
+                        key: registerFristFormKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -196,7 +198,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     if (value.currentStep == 1)
                       Form(
-                        key: value.registerSecondFormKey,
+                        key: registerSecondFormKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -356,13 +358,13 @@ class _SignupScreenState extends State<SignupScreen> {
                             'متابعة',
                             onTap: () {
                               if (value.currentStep == 0 &&
-                                  value.registerFristFormKey.currentState!
+                                  registerFristFormKey.currentState!
                                       .validate()) {
                                 value.currentStep++;
 
                                 value.changeStep(1);
                               } else if (value.currentStep == 1 &&
-                                  value.registerSecondFormKey.currentState!
+                                  registerSecondFormKey.currentState!
                                       .validate()) {
                                 value.register();
                               }

@@ -63,12 +63,11 @@ class AppButton extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            WithBackIcon == true
-                ? SizedBox(
-                    width: 5.w,
-                  )
-                : const SizedBox(),
-            if (WithBackIcon == false) buttonIcon ?? const SizedBox(),
+            if (WithBackIcon ?? false) buttonIcon ?? const SizedBox(),
+            if (buttonIcon != null && WithBackIcon == false)
+              SizedBox(
+                width: 5.w,
+              ),
             Center(
               child: CustomText(
                 text: title!,
@@ -78,11 +77,12 @@ class AppButton extends StatelessWidget {
                 fontSize: fontSize ?? 16.sp,
               ),
             ),
-            if (WithBackIcon ?? false) buttonIcon ?? const SizedBox(),
-            if (buttonIcon != null && WithBackIcon == false)
-              SizedBox(
-                width: 5.w,
-              ),
+            WithBackIcon == true
+                ? SizedBox(
+                    width: 5.w,
+                  )
+                : const SizedBox(),
+            if (WithBackIcon == false) buttonIcon ?? const SizedBox(),
           ],
         ),
       ),

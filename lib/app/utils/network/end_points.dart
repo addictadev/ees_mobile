@@ -26,4 +26,6 @@ class EndPoints {
   static const String deleteCartItem = "cart/clear-cart";
   static const String createOrder = "order/store-order";
   static const String applyCoupon = "coupon/apply-coupon";
+  static const String getOrders = "order/details";
+  static const String cancelOrder = "order/order-items/";
 }

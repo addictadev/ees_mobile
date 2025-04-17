@@ -55,7 +55,7 @@ class _CartScreenState extends State<CartScreen> {
       return Scaffold(
         bottomSheet: value.isLoadingGetCart
             ? SizedBox()
-            : cartProvider.cartModel!.data!.items! != Null &&
+            : cartProvider.cartModel?.data!.items != Null &&
                     cartProvider.cartModel!.data!.items!.isNotEmpty &&
                     totalPrice >= cartMin
                 ? _buildBottomBar(cartProvider)
@@ -103,8 +103,12 @@ class _CartScreenState extends State<CartScreen> {
                                       },
                                     ),
                                   ),
-                                  _promoCodeSection(),
-                                  2.height,
+                                  if (cartProvider.cartModel?.data!.discount ==
+                                      0)
+                                    _promoCodeSection(),
+                                  if (cartProvider.cartModel?.data!.discount ==
+                                      0)
+                                    2.height,
                                   _noteSection(),
                                   9.height
                                 ],
@@ -188,8 +192,18 @@ class _CartScreenState extends State<CartScreen> {
                 0,
           ),
         1.height,
-        _buildInfoRow(totalPrice <= cartMin, "إجمالي الطلب",
-            "${cartProvider.cartModel?.data!.totalPrice!} ج.م", true),
+        if (cartProvider.cartModel?.data!.discount == 0)
+          _buildInfoRow(totalPrice <= cartMin, "إجمالي الطلب",
+              "${cartProvider.cartModel?.data!.totalPrice!} ج.م", true),
+        if (cartProvider.cartModel?.data!.discount != 0)
+          _buildInfoRow(totalPrice <= cartMin, "إجمالي قبل الخصم",
+              "${cartProvider.cartModel?.data!.totalPrice!} ج.م", true),
+        if (cartProvider.cartModel?.data!.discount != 0)
+          _buildInfoRow(false, "الخصم",
+              "- ${cartProvider.cartModel?.data!.discount} ج.م", true),
+        if (cartProvider.cartModel?.data!.discount != 0)
+          _buildInfoRow(false, "الاجمالي بعد الخصم",
+              "${cartProvider.cartModel?.data!.totalAfterDiscount} ج.م", true),
         _buildInfoRow(totalPrice <= cartMin, "عدد المنتجات",
             "${cartProvider.cartModel?.data!.items!.length} منتجات", true),
       ],
@@ -266,7 +280,8 @@ class _CartScreenState extends State<CartScreen> {
                 Text("${cartProvider.cartModel?.data!.items!.length} منتجات",
                     style:
                         TextStyle(color: Colors.white, fontSize: AppFonts.t4)),
-                Text("${cartProvider.cartModel?.data!.totalPrice} ج.م",
+                Text(
+                    "${cartProvider.cartModel?.data!.totalAfterDiscount ?? cartProvider.cartModel?.data!.totalPrice} ج.م",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,

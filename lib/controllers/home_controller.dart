@@ -25,8 +25,8 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedVendor(int index) {
-    selectedVendor = index;
+  void setSelectedVendor(int id) {
+    selectedVendor = id;
     selectedCategory = null;
     notifyListeners();
   }
@@ -89,6 +89,8 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
+  TextEditingController searchController = TextEditingController();
+
   /////get all products with pagination///////
   Future<void> getAllHomeProducts({bool refresh = false}) async {
     if (refresh) {
@@ -111,6 +113,7 @@ class HomeProvider extends ChangeNotifier {
         EndPoints.getAllHomeProducts,
         queryParameters: {
           'page': currentPage,
+          if (searchController.text.isNotEmpty) 'search': searchController.text,
           if (selectedCategory != null && selectedCategory != 0)
             'category_id': selectedCategory,
           if (selectedVendor != null) 'property_id': selectedVendor
