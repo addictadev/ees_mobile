@@ -1,6 +1,5 @@
 import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/images_preview/custom_cashed_network_image.dart';
-import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/utils/show_toast.dart';
 import 'package:ees/app/widgets/app_button.dart';

@@ -1,13 +1,13 @@
 import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/images_preview/custom_cashed_network_image.dart';
-import 'package:ees/app/utils/app_assets.dart';
+import 'package:ees/app/navigation_services/navigation_manager.dart';
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/utils/error_view.dart';
-import 'package:ees/app/utils/show_toast.dart';
 import 'package:ees/app/widgets/app_button.dart';
 import 'package:ees/app/widgets/app_text.dart';
 import 'package:ees/app/widgets/style.dart';
 import 'package:ees/models/orders_model.dart';
+import 'package:ees/presentation/main_screens/my_orders_screen/fatora_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -18,7 +18,7 @@ import 'empty_Orders.dart';
 class InvoiceTab extends StatelessWidget {
   final String type;
   final String status;
-  final List<OrderItem>? orderList;
+  final List<OrderItemDetails>? orderList;
   const InvoiceTab(
       {super.key,
       required this.type,
@@ -157,7 +157,11 @@ class InvoiceTab extends StatelessWidget {
                             Expanded(
                               child: AppButton(
                                 'تفاصيل الفاتورة',
-                                onTap: () {},
+                                onTap: () {
+                                  NavigationManager.navigatTo(
+                                      FatoraDetailsScreen(
+                                          orderDetails: orderList![index]));
+                                },
                                 bgColor: AppColors.white,
                                 hasBorder: true,
                                 borderColor: AppColors.primary,

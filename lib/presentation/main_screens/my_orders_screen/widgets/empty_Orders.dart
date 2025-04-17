@@ -1,6 +1,5 @@
 import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../app/images_preview/custom_asset_img.dart';

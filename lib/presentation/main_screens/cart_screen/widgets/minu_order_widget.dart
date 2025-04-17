@@ -2,7 +2,6 @@ import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/widgets/style.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:sizer/sizer.dart';
 
