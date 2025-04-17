@@ -90,6 +90,7 @@ class HomeProvider extends ChangeNotifier {
   }
 
   TextEditingController searchController = TextEditingController();
+  TextEditingController searchHome = TextEditingController();
 
   /////get all products with pagination///////
   Future<void> getAllHomeProducts({bool refresh = false}) async {

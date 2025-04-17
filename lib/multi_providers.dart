@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/cart_controller.dart';
 import 'controllers/orders_controller.dart';
+import 'controllers/static_controller.dart';
 
 class MultiProviders {
   static List<ChangeNotifierProvider> providers() {
@@ -17,7 +18,10 @@ class MultiProviders {
         create: (context) => HomeProvider(),
       ),
       ChangeNotifierProvider<OrdersController>(
-          create: (context) => OrdersController())
+          create: (context) => OrdersController()),
+      ChangeNotifierProvider<StaticProvider>(
+        create: (context) => StaticProvider(),
+      )
     ];
   }
 }

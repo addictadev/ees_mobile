@@ -1,7 +1,10 @@
 import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/images_preview/custom_cashed_network_image.dart';
+import 'package:ees/app/images_preview/custom_svg_img.dart';
 import 'package:ees/app/navigation_services/navigation_manager.dart';
+import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/utils/app_colors.dart';
+import 'package:ees/app/utils/consts.dart';
 import 'package:ees/app/utils/error_view.dart';
 import 'package:ees/app/widgets/app_button.dart';
 import 'package:ees/app/widgets/app_text.dart';
@@ -9,11 +12,13 @@ import 'package:ees/app/widgets/style.dart';
 import 'package:ees/models/orders_model.dart';
 import 'package:ees/presentation/main_screens/my_orders_screen/fatora_details_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../controllers/orders_controller.dart';
 import 'empty_Orders.dart';
+import 'ordersDialog.dart';
 
 class InvoiceTab extends StatelessWidget {
   final String type;
@@ -35,6 +40,7 @@ class InvoiceTab extends StatelessWidget {
         : orderList!.isEmpty
             ? EmptyOrders()
             : ListView.builder(
+                padding: EdgeInsets.zero,
                 itemCount: orderList?.length,
                 itemBuilder: (context, index) {
                   return Container(
@@ -55,14 +61,15 @@ class InvoiceTab extends StatelessWidget {
                           children: [
                             _buildTag(
                                 "الرقم التعريفي : # ${orderList?[index].id}",
-                                Icons.document_scanner),
+                                AppAssets.numIc),
                             _buildTag(
-                                "تاريخ الطلب: ${orderList?[index].orderedAt}",
-                                Icons.calendar_today),
-                            // _buildTag(
-                            //     "تاريخ تحديث الطلب: 11/7/2024", Icons.calendar_today),
+                                "  حالة الطلب : ${orderList?[index].status}",
+                                AppAssets.switchIcon),
                           ],
                         ),
+                        _buildTag(
+                            "تاريخ الطلب : ${formatOrderDate(orderList?[index].orderedAt)}",
+                            AppAssets.calenderIc),
                         2.height,
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -143,10 +150,12 @@ class InvoiceTab extends StatelessWidget {
                               Expanded(
                                 child: AppButton(
                                   'الغاء الطلب',
-                                  onTap: () => Provider.of<OrdersController>(
-                                          context,
-                                          listen: false)
-                                      .cancelOrder(orderList?[index].id ?? 0),
+                                  onTap: () =>
+                                      showCancelOrderDialog(context, () {
+                                    Provider.of<OrdersController>(context,
+                                            listen: false)
+                                        .cancelOrder(orderList?[index].id ?? 0);
+                                  }),
                                   bgColor: AppColors.white,
                                   hasBorder: true,
                                   borderColor: AppColors.red,
@@ -171,10 +180,10 @@ class InvoiceTab extends StatelessWidget {
                           ],
                         ),
                         if (type == 'previous') SizedBox(width: 10),
-                        if (type == 'previous')
+                        if (type == 'previous' && status == 'تم الاستلام')
                           AppButton(
                             'تقييم المورد',
-                            onTap: () {},
+                            onTap: () => showRatingDialog(context),
                             margin: EdgeInsets.symmetric(vertical: 3.w),
                           ),
                       ],
@@ -184,7 +193,7 @@ class InvoiceTab extends StatelessWidget {
   }
 }
 
-Widget _buildTag(String text, IconData icon) {
+Widget _buildTag(String text, icon) {
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     decoration: BoxDecoration(
@@ -194,7 +203,12 @@ Widget _buildTag(String text, IconData icon) {
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: Colors.grey[600]),
+        CustomSvgImage(
+          assetName: icon,
+          height: 16.sp,
+          color: Colors.grey[700],
+          width: 12.sp,
+        ),
         SizedBox(width: 4),
         Text(text, style: TextStyle(fontSize: 14.sp, color: Colors.grey[700])),
       ],

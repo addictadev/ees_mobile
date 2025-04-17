@@ -82,10 +82,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   AppTextField(
                     width: 75.w,
-                    search: true,
+                    search: false,
+                    readOnly: true,
+                    controller: value.searchHome,
                     hintText: 'ابحث عن منتجات أو علامة تجارية',
                     borderColor: AppColors.white,
-                    controller: value.searchController,
                     onTap: () => NavigationManager.navigatTo(SearchScreen()),
                     prefixIcon: Padding(
                       padding: EdgeInsets.all(2.w),

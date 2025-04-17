@@ -48,7 +48,7 @@
     "current_location": "Your current location",
     "final_destination": "Your destination",
     "last_trip": "Last Trip",
-    "error_filed_required": "This field is required.",
+    "هذا الحقل مطلوب": "This field is required.",
     "Empty Field":"Empty Field",
   "Enter a valid phone number that starts with 01 and is 11 digits":  "Enter a valid phone number that starts with 01 and is 11 digits",
     "rebook": "Rebook",

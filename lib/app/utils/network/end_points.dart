@@ -27,5 +27,7 @@ class EndPoints {
   static const String createOrder = "order/store-order";
   static const String applyCoupon = "coupon/apply-coupon";
   static const String getOrders = "order/details";
-  static const String cancelOrder = "order/order-items/";
+  static const String cancelOrder = "order/";
+  static const String cancelOrderItem = "order/order-items/";
+  static const String acceptOrderEdit = "order/accept-update/";
 }

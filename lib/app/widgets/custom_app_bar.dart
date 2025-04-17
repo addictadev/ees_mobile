@@ -6,7 +6,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../../../app/widgets/app_text.dart';
 
-Widget CustomeAppBar({text}) {
+Widget CustomeAppBar({text, onTap}) {
   return Container(
     height: 18.h,
     width: 100.w,
@@ -25,7 +25,7 @@ Widget CustomeAppBar({text}) {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           InkWell(
-            onTap: () => NavigationManager.pop(),
+            onTap: onTap ?? () => NavigationManager.pop(),
             child: Container(
               decoration: getBoxDecoration(fillColor: AppColors.white),
               padding: EdgeInsets.all(1.5.w),
@@ -42,7 +42,7 @@ Widget CustomeAppBar({text}) {
                 color: AppColors.white,
                 maxLines: 2),
           ),
-          SizedBox(width: 3.w),
+          SizedBox(width: 10.w),
         ],
       ),
     ),

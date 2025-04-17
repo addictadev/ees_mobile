@@ -64,7 +64,7 @@ class _CartScreenState extends State<CartScreen> {
           children: [
             HomeAppBar(text: 'العربة', isHome: false),
             Expanded(
-              child: value.isLoadingGetCart
+              child: value.isLoadingGetCart || cartProvider.cartModel == null
                   ? loadingIndicator
                   : value.hasErrorGetCart
                       ? ErrorView(onReload: () {

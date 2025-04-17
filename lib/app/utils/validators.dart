@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 class Validator {
   static String? defaultValidator(String? value) {
     if (value != null && value.trim().isEmpty) {
-      return "error_filed_required".tr();
+      return "هذا الحقل مطلوب".tr();
     }
     return null;
   }
@@ -36,7 +36,7 @@ class Validator {
     if (value != null) {
       value = value.trim();
       if (value.isEmpty) {
-        return "error_filed_required".tr();
+        return "هذا الحقل مطلوب".tr();
       }
     }
     return null;
@@ -46,7 +46,7 @@ class Validator {
     if (value != null) {
       value = value.trim();
       if (value.isEmpty) {
-        return "error_filed_required".tr();
+        return "هذا الحقل مطلوب".tr();
       } else if (!RegExp('[a-zA-Z]').hasMatch(value)) {
         return "enter_correct_name".tr();
       }
@@ -59,7 +59,7 @@ class Validator {
         r'(http|https)://[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?';
     RegExp regExp = RegExp(pattern);
     if (value!.isEmpty) {
-      return "error_filed_required".tr();
+      return "هذا الحقل مطلوب".tr();
     } else if (!regExp.hasMatch(value)) {
       return "enter_correct_link".tr();
     }
@@ -72,7 +72,7 @@ class Validator {
 
   static String? phoneValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return "error_filed_required".tr();
+      return "هذا الحقل مطلوب".tr();
     } else if (!RegExp(r'^01\d{9}$').hasMatch(value)) {
       return "Enter a valid phone number that starts with 01 and is 11 digits"
           .tr()
@@ -86,14 +86,14 @@ class Validator {
     if (value != null) {
       value = value.trim();
       if (value.isEmpty) {
-        return "error_filed_required".tr();
+        return "هذا الحقل مطلوب".tr();
       } else if (!RegExp(
               r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9-_]+\.[a-zA-Z]+")
           .hasMatch(value)) {
         return "error_email_regex".tr();
       }
     } else {
-      return "error_filed_required".tr();
+      return "هذا الحقل مطلوب".tr();
     }
     return null;
   }
@@ -102,7 +102,7 @@ class Validator {
     if (value != null) {
       value = value.trim();
       if (value.isEmpty) {
-        return "error_filed_required".tr();
+        return "هذا الحقل مطلوب".tr();
       } else if (value.length < 8 ||
           !RegExp(r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
               .hasMatch(value)) {
@@ -116,12 +116,12 @@ class Validator {
     if (confirmPassword != null) {
       confirmPassword = confirmPassword.trim();
       if (confirmPassword.isEmpty) {
-        return "error_filed_required".tr();
+        return "هذا الحقل مطلوب".tr();
       } else if (confirmPassword != password) {
         return "error_wrong_password_confirm".tr();
       }
     } else {
-      return "error_filed_required".tr();
+      return "هذا الحقل مطلوب".tr();
     }
     return null;
   }
@@ -130,7 +130,7 @@ class Validator {
     if (value != null) {
       value = value.trim();
       if (value.isEmpty) {
-        return "error_filed_required".tr();
+        return "هذا الحقل مطلوب".tr();
       }
       if (value.startsWith("+")) {
         value = value.replaceFirst(r'+', "".tr());
@@ -140,7 +140,7 @@ class Validator {
         return "error_wrong_input".tr();
       }
     } else {
-      return "error_filed_required".tr();
+      return "هذا الحقل مطلوب".tr();
     }
     return null;
   }
@@ -149,7 +149,7 @@ class Validator {
     if (value != null) {
       value = value.trim();
       if (value.isEmpty) {
-        return "error_filed_required".tr();
+        return "هذا الحقل مطلوب".tr();
       }
       if (value.startsWith("+")) {
         value = value.replaceFirst(r'+', "".tr());
@@ -161,7 +161,7 @@ class Validator {
         return "${"error_price_less_than_fare".tr()} $fare ${"EGP".tr()}";
       }
     } else {
-      return "error_filed_required".tr();
+      return "هذا الحقل مطلوب".tr();
     }
     return null;
   }
@@ -174,7 +174,7 @@ class Validator {
       value = value.trim();
       value = value.replaceAll(r' ', '');
       if (value.isEmpty) {
-        return "error_filed_required".tr();
+        return "هذا الحقل مطلوب".tr();
       }
       if (!value.startsWith(model.startWith) || value.length != model.length) {
         return model.startWith.isEmpty

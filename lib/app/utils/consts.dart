@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class ConstsClass {
   factory ConstsClass() {
     return _instance;
@@ -20,4 +22,14 @@ class ConstsClass {
   static const String userAddressUsedId = "user_addressUsed_id";
   static const String userLatitude = "userLatitude";
   static const String userLongitude = "userLongitude";
+}
+
+String formatOrderDate(String? dateStr) {
+  if (dateStr == null) return '';
+  try {
+    DateTime dateTime = DateTime.parse(dateStr);
+    return DateFormat('d MMMM y - hh:mm a', 'ar').format(dateTime);
+  } catch (e) {
+    return dateStr; // fallback to original if parsing fails
+  }
 }

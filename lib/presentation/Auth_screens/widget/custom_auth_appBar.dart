@@ -9,7 +9,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../../app/navigation_services/navigation_manager.dart';
 
-Widget customAuthAppBar({required String title}) {
+Widget customAuthAppBar({required String title, onTap}) {
   return Container(
       height: 22.h,
       width: 100.w,
@@ -26,7 +26,7 @@ Widget customAuthAppBar({required String title}) {
         children: [
           9.height,
           InkWell(
-              onTap: () => NavigationManager.pop(),
+              onTap: onTap ?? () => NavigationManager.pop(),
               child: CustomImageAsset(
                 assetName: AppAssets.backIcon,
                 width: 12.w,
@@ -34,7 +34,7 @@ Widget customAuthAppBar({required String title}) {
           1.height,
           CustomText(
             text: title,
-            fontSize: AppFonts.h3,
+            fontSize: AppFonts.h2,
             color: AppColors.white,
             fontweight: FontWeight.bold,
           ),

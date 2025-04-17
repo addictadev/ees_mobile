@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:ees/app/navigation_services/navigation_manager.dart';
 import 'package:ees/models/orders_model.dart';
+import 'package:ees/presentation/main_screens/main_nav_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
@@ -40,8 +42,35 @@ class OrdersController with ChangeNotifier {
     }
   }
 
+  Future<void> cancelOrderItem(var orderId) async {
+    try {
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+      notifyListeners();
+      final response = await DioHelper.post(
+          EndPoints.cancelOrderItem + "$orderId/cancel",
+          data: {"order_id": orderId},
+          requiresAuth: true);
+      if (response['status'] == true) {
+        EasyLoading.dismiss();
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.success);
+        NavigationManager.navigatToAndFinish(MainScreen(currentIndex: 2));
+      } else {
+        EasyLoading.dismiss();
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.error);
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      log(e.toString());
+      notifyListeners();
+    }
+  }
+
   /////cancel order//////
-  Future<void> cancelOrder(var orderId) async {
+  Future<void> cancelOrder(var orderId, {bool fromDetails = false}) async {
     try {
       EasyLoading.show(
         maskType: EasyLoadingMaskType.black,
@@ -55,7 +84,39 @@ class OrdersController with ChangeNotifier {
         EasyLoading.dismiss();
         notifyListeners();
         showCustomedToast(response['message'], ToastType.success);
-        getAllOrders("pending");
+        fromDetails == true
+            ? NavigationManager.navigatToAndFinish(MainScreen(currentIndex: 2))
+            : getAllOrders("pending");
+      } else {
+        EasyLoading.dismiss();
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.error);
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      log(e.toString());
+      notifyListeners();
+    }
+  }
+
+  //// acceptEdit////
+  Future<void> acceptEdit({var orderId, quantity}) async {
+    try {
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+      notifyListeners();
+      final response = await DioHelper.post(
+          EndPoints.acceptOrderEdit + "$orderId",
+          data: {"order_id": orderId, 'quantity': quantity},
+          requiresAuth: true);
+      if (response['status'] == true) {
+        EasyLoading.dismiss();
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.success);
+        NavigationManager.navigatToAndFinish(MainScreen(
+          currentIndex: 2,
+        ));
       } else {
         EasyLoading.dismiss();
         notifyListeners();

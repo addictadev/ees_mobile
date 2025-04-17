@@ -3,9 +3,11 @@ import 'package:ees/app/navigation_services/navigation_manager.dart';
 import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/presentation/Auth_screens/login_screen/login_screen.dart';
+import 'package:ees/presentation/static_screens/contactUs_screen/contactUsScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../notification_screen/notification_screen.dart';
 import 'drawer_item.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -22,7 +24,13 @@ class CustomDrawer extends StatelessWidget {
           5.height,
           DrawerItem(icon: Icons.person_2_outlined, title: "البيانات الشخصية"),
           DrawerItem(
-              icon: Icons.notifications_none_outlined, title: "الإشعارات"),
+            icon: Icons.notifications_none_outlined,
+            title: "الإشعارات",
+            onTap: () {
+              NavigationManager.pop();
+              NavigationManager.navigatTo(NotificationScreen());
+            },
+          ),
           // Divider(),
           DrawerItem(
             icon: Icons.wallet_giftcard,
@@ -31,7 +39,14 @@ class CustomDrawer extends StatelessWidget {
             color: AppColors.brown,
             tag: "قريبًا",
           ),
-          DrawerItem(icon: Icons.phone, title: "إتصل بنا"),
+          DrawerItem(
+            icon: Icons.phone,
+            title: "إتصل بنا",
+            onTap: () {
+              NavigationManager.pop();
+              NavigationManager.navigatToAndFinish(Contactusscreen());
+            },
+          ),
           Spacer(),
           DrawerItem(
             icon: Icons.delete_outline_outlined,

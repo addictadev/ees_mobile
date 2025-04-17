@@ -70,7 +70,7 @@ class _OrdersScreenState extends State<OrdersScreen>
           children: [
             HomeAppBar(text: 'فواتيري', isHome: false),
             Container(
-              margin: EdgeInsets.only(top: 1.h, bottom: 2.h),
+              margin: EdgeInsets.only(top: 1.h, bottom: 1.h),
               padding: EdgeInsets.symmetric(horizontal: 3.w),
               decoration: getBoxDecoration(
                   fillColor: AppColors.grey, withShadwos: false),

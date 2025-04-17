@@ -107,6 +107,8 @@ class Items {
   String? productName;
   int? variantId;
   int? quantity;
+  dynamic seller_note;
+  dynamic seller_quantity;
   String? price;
   String? image;
   String? status;
@@ -123,6 +125,8 @@ class Items {
     productName = json['product_name'];
     variantId = json['variant_id'];
     quantity = json['quantity'];
+    seller_note = json['seller_note'];
+    seller_quantity = json['seller_quantity'];
     price = json['price'];
     image = json['image'];
     status = json['status'];
@@ -133,6 +137,8 @@ class Items {
     data['product_name'] = productName;
     data['variant_id'] = variantId;
     data['quantity'] = quantity;
+    data['seller_note'] = seller_note;
+    data['seller_quantity'] = seller_quantity;
     data['price'] = price;
     data['image'] = image;
     data['status'] = status;

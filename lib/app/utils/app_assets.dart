@@ -48,7 +48,8 @@ class AppAssets {
   static const String privacyIcon = "assets/icons/privacy.svg";
   static const String profileIcon = "assets/icons/profile.svg";
   static const String rateIcon = "assets/icons/rate.svg";
-  static const String rebookIcon = "assets/icons/rebook.svg";
+  static const String numIc = "assets/icons/dash.svg";
+  static const String calenderIc = "assets/icons/calendar.svg";
   static const String requestIcon = "assets/icons/request.svg";
   static const String requestsIcon = "assets/icons/requests.svg";
   static const String safetyIcon = "assets/icons/safety.svg";
@@ -67,4 +68,6 @@ class AppAssets {
   static const String filterIcon = "assets/icons/filter-search.svg";
   static const String product1 = "assets/images/img.png";
   static const String emptyCart = "assets/images/emptycart.png";
+  static const String noItems = "assets/images/group.png";
+  static const String noNotifications = "assets/images/nonot.png";
 }

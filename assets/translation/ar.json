@@ -86,7 +86,7 @@
     "final_destination": "الوجهة النهائية",
     "last_trip": "أخر رحلة",
     "Search for your destination or nearby places":"ابحث عن وجهتك أو الأماكن القريبة",
-    "error_filed_required": "هذا الحقل مطلوب",
+    "هذا الحقل مطلوب": "هذا الحقل مطلوب",
     "Empty Field":"حقل فارغ",
     "rebook": "إعادة الحجز",
     "search":"البحث",
@@ -120,6 +120,7 @@
     "userDetails": "تفاصيل المستخدم",
     "time": "الوقت المتوقع للرحلة : ",
     "EX:":"على سبيل المثال : ",
+
     "distance": "المسافة المتوقعة للرحلة : ",
     "carLicense": "رخصة السيارة",
     "sadety": "السلامة",
