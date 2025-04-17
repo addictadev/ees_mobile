@@ -31,8 +31,9 @@ class _OrdersScreenState extends State<OrdersScreen>
     _tabController = TabController(length: 3, vsync: this);
 
     _tabController.addListener(() {
-      if (_tabController.indexIsChanging)
+      if (_tabController.indexIsChanging) {
         return; // avoid calling twice during animation
+      }
 
       String status;
       switch (_tabController.index) {
@@ -135,17 +136,17 @@ class _OrdersScreenState extends State<OrdersScreen>
                         InvoiceTab(
                           type: 'current',
                           status: "pending",
-                          orderList: value.ordersModel?.orderList,
+                          orderList: value.ordersModel?.orderList ?? [],
                         ),
                         InvoiceTab(
                           type: 'confirmed',
                           status: "accepted",
-                          orderList: value.ordersModel?.orderList,
+                          orderList: value.ordersModel?.orderList ?? [],
                         ),
                         InvoiceTab(
                           type: 'previous',
                           status: "finished",
-                          orderList: value.ordersModel?.orderList,
+                          orderList: value.ordersModel?.orderList ?? [],
                         ),
                       ],
                     ),

@@ -1,7 +1,7 @@
 class OrdersModel {
   bool? status;
   String? message;
-  List<OrderItem>? orderList;
+  List<OrderItemDetails>? orderList;
 
   OrdersModel({this.status, this.message, this.orderList});
 
@@ -9,9 +9,9 @@ class OrdersModel {
     status = json['status'];
     message = json['message'];
     if (json['data'] != null) {
-      orderList = <OrderItem>[];
+      orderList = <OrderItemDetails>[];
       json['data'].forEach((v) {
-        orderList!.add(OrderItem.fromJson(v));
+        orderList!.add(OrderItemDetails.fromJson(v));
       });
     }
   }
@@ -27,7 +27,7 @@ class OrdersModel {
   }
 }
 
-class OrderItem {
+class OrderItemDetails {
   int? id;
   String? status;
   String? note;
@@ -36,7 +36,7 @@ class OrderItem {
   Property? property;
   List<Items>? items;
 
-  OrderItem(
+  OrderItemDetails(
       {this.id,
       this.status,
       this.note,
@@ -45,7 +45,7 @@ class OrderItem {
       this.property,
       this.items});
 
-  OrderItem.fromJson(Map<String, dynamic> json) {
+  OrderItemDetails.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     status = json['status'];
     note = json['note'];

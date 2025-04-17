@@ -6,7 +6,6 @@ import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/widgets/app_button.dart';
 import 'package:ees/app/widgets/app_text.dart';
 import 'package:ees/controllers/cart_controller.dart';
-import 'package:ees/models/cart_model.dart';
 import 'package:ees/models/products_home_data_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

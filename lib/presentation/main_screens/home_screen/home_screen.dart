@@ -13,7 +13,6 @@ import 'package:ees/app/widgets/style.dart';
 import 'package:ees/controllers/home_controller.dart';
 import 'package:ees/presentation/main_screens/home_screen/widgets/products_home_grids.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
