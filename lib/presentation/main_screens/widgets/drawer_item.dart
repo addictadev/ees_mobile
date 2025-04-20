@@ -28,7 +28,7 @@ class DrawerItem extends StatelessWidget {
           onTap: onTap,
           child: Container(
             color: color ?? AppColors.bluebgColor,
-            margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
+            margin: EdgeInsets.symmetric(vertical: 1.3.h, horizontal: 3.w),
             child: ListTile(
               leading: Icon(icon, color: textColor ?? AppColors.primary),
               title: Text(

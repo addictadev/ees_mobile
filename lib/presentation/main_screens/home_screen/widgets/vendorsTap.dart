@@ -14,12 +14,65 @@ class VendorList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<HomeProvider>(context);
-    final vendors = provider.vendorModel?.data; // Your vendor list from API
+    final vendors = provider.vendorModel?.data;
 
-    if (vendors == null || vendors.isEmpty) {
-      return const SizedBox(); // return empty if no vendors
+    if (provider.isLoadingVendors) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+              text: "الموردين",
+              padding: EdgeInsets.only(bottom: 1.5.h),
+              fontweight: FontWeight.bold,
+              color: AppColors.primary),
+          Container(
+            margin: EdgeInsets.only(bottom: 1.5.h),
+            height: 5.5.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return Container(
+                  width: 35.w,
+                  margin: EdgeInsets.only(left: 3.w),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(3.w),
+                  ),
+                  padding: EdgeInsets.all(2.w),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                        height: 3.h,
+                        width: 3.h,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(3.w),
+                        ),
+                      ),
+                      1.width,
+                      Expanded(
+                        child: Container(
+                          height: 1.5.h,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      );
     }
 
+    if (vendors == null || vendors.isEmpty) {
+      return const SizedBox();
+    }
+
+    // Actual Vendor List
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -34,17 +87,15 @@ class VendorList extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: vendors.length,
-            // padding: EdgeInsets.symmetric(horizontal: 2.w),
             itemBuilder: (context, index) {
               final vendor = vendors[index];
               final isSelected = provider.selectedVendor == vendor.id;
+
               return GestureDetector(
                 onTap: () {
                   provider.setSelectedVendor(vendor.id!);
-                  Provider.of<HomeProvider>(context, listen: false)
-                      .currentPage = 1;
-                  Provider.of<HomeProvider>(context, listen: false)
-                      .getAllHomeProducts(refresh: true);
+                  provider.currentPage = 1;
+                  provider.getAllHomeProducts(refresh: true);
                 },
                 child: Container(
                   width: 35.w,
@@ -65,40 +116,37 @@ class VendorList extends StatelessWidget {
                       width: 0.25.w,
                     ),
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.all(2.w),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(3.w),
-                          child: CustomCachedImage(
-                            imageUrl: vendor.logo ?? "",
-                            height: 3.h,
-                            width: 3.h,
-                            fit: BoxFit.cover,
+                  padding: EdgeInsets.all(2.w),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(3.w),
+                        child: CustomCachedImage(
+                          imageUrl: vendor.logo ?? "",
+                          height: 3.h,
+                          width: 3.h,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      1.width,
+                      Expanded(
+                        child: Text(
+                          vendor.name ?? '',
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color:
+                                isSelected ? AppColors.primary : Colors.black87,
                           ),
                         ),
-                        1.width,
-                        Expanded(
-                          child: Text(
-                            vendor.name ?? '',
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              color: isSelected
-                                  ? AppColors.primary
-                                  : Colors.black87,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               );

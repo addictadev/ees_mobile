@@ -19,6 +19,7 @@ import '../presentation/forget_pass_screen/resendPassScreen.dart';
 import 'package:dio/dio.dart';
 
 class AuthController with ChangeNotifier implements ReassembleHandler {
+  GlobalKey<FormState> changePassFormKey = GlobalKey<FormState>();
   IconData loginVisibilityIcon = Icons.visibility_off_outlined;
   IconData clientRegister1VisibilityIcon = Icons.visibility_off_outlined;
   IconData oldIcon = Icons.visibility_off_outlined;
@@ -30,6 +31,12 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
   int currentStep = 0;
   bool isPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
+  bool isOldPasswordVisible = false;
+
+  togeleOldPasswordVisibility() {
+    isOldPasswordVisible = !isOldPasswordVisible;
+    notifyListeners();
+  }
 
   void togglePasswordVisibility() {
     isPasswordVisible = !isPasswordVisible;
@@ -63,6 +70,7 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
   }
 
   TextEditingController emailController = TextEditingController();
+  TextEditingController oldPasswordController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
@@ -391,6 +399,70 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
         showCustomedToast(response['message'], ToastType.error);
         EasyLoading.dismiss();
         notifyListeners();
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      notifyListeners();
+      log(e.toString());
+    }
+  }
+
+//////cahnge password/////
+  void changePassword() async {
+    try {
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+
+      notifyListeners();
+      final Map<String, dynamic> body = {
+        "current_password": oldPasswordController.text,
+        "password": passwordController.text,
+        "password_confirmation": confirmPasswordController.text,
+      };
+      final response = await DioHelper.post(EndPoints.changePassword,
+          data: body, requiresAuth: true);
+      if (response['success'] == true) {
+        oldPasswordController.clear();
+        passwordController.clear();
+        confirmPasswordController.clear();
+        EasyLoading.dismiss();
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.success);
+        NavigationManager.navigatToAndFinish(MainScreen());
+      } else {
+        showCustomedToast(response['message'], ToastType.error);
+        EasyLoading.dismiss();
+        notifyListeners();
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      notifyListeners();
+      log(e.toString());
+    }
+  }
+  //logout////
+
+  Future<void> logout() async {
+    try {
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+      notifyListeners();
+      final response =
+          await DioHelper.post(EndPoints.logout, data: {}, requiresAuth: true);
+      if (response['success'] == true) {
+        EasyLoading.dismiss();
+        notifyListeners();
+        sharedPref.clear();
+        showCustomedToast(response['message'], ToastType.success);
+        NavigationManager.navigatToAndFinish(LoginScreen());
+      } else {
+        EasyLoading.dismiss();
+        notifyListeners();
+        NavigationManager.navigatToAndFinish(LoginScreen());
+        sharedPref.clear();
+        showCustomedToast(response['message'], ToastType.error);
       }
     } catch (e) {
       EasyLoading.dismiss();

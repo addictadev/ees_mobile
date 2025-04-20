@@ -57,7 +57,7 @@ class _CartScreenState extends State<CartScreen> {
         builder: (BuildContext context, value, Widget? child) {
       return Scaffold(
         bottomSheet: IsLogin()
-            ? value.isLoadingGetCart
+            ? value.isLoadingGetCart || cartProvider.cartModel == null
                 ? SizedBox()
                 : cartProvider.cartModel?.data!.items != Null &&
                         cartProvider.cartModel!.data!.items!.isNotEmpty &&

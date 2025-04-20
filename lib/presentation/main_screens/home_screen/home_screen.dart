@@ -15,6 +15,7 @@ import 'package:ees/presentation/product_details_screen/product_details_screen.d
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -38,11 +39,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _scrollController.addListener(_onScroll);
     Future.microtask(() {
+      Provider.of<HomeProvider>(context, listen: false).selectedCategory = 0;
+
       Provider.of<HomeProvider>(context, listen: false)
           .searchController
           .clear();
       Provider.of<HomeProvider>(context, listen: false).selectedVendor = null;
-      Provider.of<HomeProvider>(context, listen: false).selectedCategory = null;
       Provider.of<HomeProvider>(context, listen: false).getAllCategories();
       Provider.of<HomeProvider>(context, listen: false).getAlVendors();
       Provider.of<HomeProvider>(context, listen: false).getAllHomeSlider();
@@ -116,35 +118,33 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             2.height,
             Expanded(
-              child: value.isLoadingCategories || value.isLoadingVendors
-                  ? loadingIndicator
-                  : SingleChildScrollView(
-                      controller: _scrollController,
-                      physics: BouncingScrollPhysics(),
-                      child: Container(
-                        padding: EdgeInsets.only(
-                          left: 3.w,
-                          right: 3.w,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                physics: BouncingScrollPhysics(),
+                child: Container(
+                  padding: EdgeInsets.only(
+                    left: 3.w,
+                    right: 3.w,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SliderWidget(),
+                      const CategoryTabs(),
+                      VendorList(),
+                      const ProductGrid(),
+                      if (value.isLoadingProducts &&
+                          value.productsModel != null)
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 2.h),
+                          child: Center(
+                            child: loadingIndicator,
+                          ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SliderWidget(),
-                            const CategoryTabs(),
-                            VendorList(),
-                            const ProductGrid(),
-                            if (value.isLoadingProducts &&
-                                value.productsModel != null)
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 2.h),
-                                child: Center(
-                                  child: loadingIndicator,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ],
         );
@@ -195,54 +195,71 @@ class _SliderWidgetState extends State<SliderWidget> {
       width: 100.w,
       child: Consumer<HomeProvider>(
           builder: (BuildContext context, value, Widget? child) {
-        return Column(
-          children: [
-            SizedBox(
-              height: 17.h,
-              child: PageView.builder(
-                controller: _controller,
-                itemCount: value.sliderModel!.data!.length,
-                onPageChanged: (index) => setState(() => _currentIndex = index),
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      if (value.sliderModel!.data![index].link == null) {
-                        NavigationManager.navigatTo(ProductDetailsScreen(
-                            product: value.sliderModel!.data![index].product!,
-                            productName:
-                                value.sliderModel!.data![index].product!.name ??
-                                    ""));
-                      } else {
-                        openLink(value.sliderModel!.data![index].link!);
-                      }
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 2.w),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(3.w),
-                        image: DecorationImage(
-                          image: NetworkImage(
-                              value.sliderModel!.data![index].image ?? ""),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+        return value.isLoadingSlider
+            ? Skeletonizer(
+                enabled: true,
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 2.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(3.w),
+                    image: DecorationImage(
+                      image: NetworkImage(""),
+                      fit: BoxFit.cover,
                     ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 1.h),
-            SmoothPageIndicator(
-              controller: _controller,
-              count: value.sliderModel!.data!.length,
-              effect: ExpandingDotsEffect(
-                activeDotColor: Colors.blue,
-                dotHeight: 1.h,
-                dotWidth: 2.w,
-              ),
-            ),
-          ],
-        );
+                  ),
+                ),
+              )
+            : Column(
+                children: [
+                  SizedBox(
+                    height: 17.h,
+                    child: PageView.builder(
+                      controller: _controller,
+                      itemCount: value.sliderModel!.data!.length,
+                      onPageChanged: (index) =>
+                          setState(() => _currentIndex = index),
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            if (value.sliderModel!.data![index].link == null) {
+                              NavigationManager.navigatTo(ProductDetailsScreen(
+                                  product:
+                                      value.sliderModel!.data![index].product!,
+                                  productName: value.sliderModel!.data![index]
+                                          .product!.name ??
+                                      ""));
+                            } else {
+                              openLink(value.sliderModel!.data![index].link!);
+                            }
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 2.w),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(3.w),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                    value.sliderModel!.data![index].image ??
+                                        ""),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 1.h),
+                  SmoothPageIndicator(
+                    controller: _controller,
+                    count: value.sliderModel!.data!.length,
+                    effect: ExpandingDotsEffect(
+                      activeDotColor: Colors.blue,
+                      dotHeight: 1.h,
+                      dotWidth: 2.w,
+                    ),
+                  ),
+                ],
+              );
       }),
     );
   }

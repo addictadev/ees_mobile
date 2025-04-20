@@ -2,10 +2,13 @@ import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/navigation_services/navigation_manager.dart';
 import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/utils/app_colors.dart';
+import 'package:ees/controllers/auth_controller.dart';
 import 'package:ees/presentation/Auth_screens/login_screen/login_screen.dart';
+import 'package:ees/presentation/profile_screen/myProfileScreen.dart';
 import 'package:ees/presentation/static_screens/contactUs_screen/contactUsScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../../app/dependency_injection/get_it_injection.dart';
 import '../../../app/utils/consts.dart';
@@ -30,7 +33,9 @@ class CustomDrawer extends StatelessWidget {
           5.height,
           if (sharedPref.getBool(ConstsClass.isAuthorized))
             DrawerItem(
-                icon: Icons.person_2_outlined, title: "البيانات الشخصية"),
+                onTap: () => NavigationManager.navigatTo(ProfileScreen()),
+                icon: Icons.person_2_outlined,
+                title: "البيانات الشخصية"),
           if (sharedPref.getBool(ConstsClass.isAuthorized))
             DrawerItem(
               icon: Icons.notifications_none_outlined,
@@ -56,9 +61,20 @@ class CustomDrawer extends StatelessWidget {
           ),
           DrawerItem(
             icon: Iconsax.document,
-            title: "الشروط و الاحكام",
+            title: "الشروط والاحكام",
             onTap: () {
-              NavigationManager.navigatTo(TermsAndConditionScreen());
+              NavigationManager.navigatTo(TermsAndConditionScreen(
+                isTerms: true,
+              ));
+            },
+          ),
+          DrawerItem(
+            icon: Iconsax.security,
+            title: "سياسة الخصوصية",
+            onTap: () {
+              NavigationManager.navigatTo(TermsAndConditionScreen(
+                isTerms: false,
+              ));
             },
           ),
           Spacer(),
@@ -74,8 +90,12 @@ class CustomDrawer extends StatelessWidget {
             title: IsLogin() ? "تسجيل الخروج" : "تسجيل الدخول",
             color: Colors.red.withOpacity(.2),
             onTap: () {
-              sharedPref.clear();
-              NavigationManager.navigatToAndFinish(LoginScreen());
+              if (IsLogin()) {
+                Provider.of<AuthController>(context, listen: false).logout();
+              } else {
+                sharedPref.clear();
+                NavigationManager.navigatToAndFinish(LoginScreen());
+              }
             },
             textColor: Colors.red,
           ),

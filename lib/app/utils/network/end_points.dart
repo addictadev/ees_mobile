@@ -20,6 +20,7 @@ class EndPoints {
   static const String getAllSuppliers = "properties/get-all";
   static const String getAllHomeProducts = "products/get-all";
   static const String addToCart = "cart/add-to-cart";
+  static const String forceAddToCart = "cart/force-add-to-cart";
   static const String getCart = "cart/get-cart";
   static const String incrementCartItem = "cart/increment-cart-quantity";
   static const String decrementCartItem = "cart/decrement-cart-quantity";
@@ -31,4 +32,7 @@ class EndPoints {
   static const String cancelOrderItem = "order/order-items/";
   static const String acceptOrderEdit = "order/accept-update/";
   static const String getAllSliders = "sliders/get-all";
+  static const String getStaticPage = "privacy/get-all";
+  static const String changePassword = 'profile/update-password';
+  static const String logout = 'auth/logout';
 }

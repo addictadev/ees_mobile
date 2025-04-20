@@ -76,7 +76,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                         if (widget.cartItem.quantity! >=
                             widget.cartItem.variant!.maxQuantity!) {
                           showCustomedToast(
-                              'اقصي كمية للمنتج ${widget.cartItem.variant!.maxQuantity}',
+                              ' الحد الاقصى للمنتج ${widget.cartItem.variant!.maxQuantity}',
                               ToastType.error);
                         } else {
                           Provider.of<CartProvider>(context, listen: false)
@@ -104,7 +104,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                         if (widget.cartItem.quantity! <=
                             widget.cartItem.variant!.minQuantity!.toInt()) {
                           showCustomedToast(
-                              'اقل كمية للمنتج ${widget.cartItem.variant!.minQuantity}',
+                              ' الحد الادنى للمنتج ${widget.cartItem.variant!.minQuantity}',
                               ToastType.error);
                         } else {
                           Provider.of<CartProvider>(context, listen: false)

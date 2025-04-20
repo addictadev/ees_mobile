@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cherry_toast/resources/constants.dart';
 import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/images_preview/custom_cashed_network_image.dart';
@@ -9,6 +11,7 @@ import 'package:ees/app/widgets/app_button.dart';
 import 'package:ees/app/widgets/app_text.dart';
 import 'package:ees/controllers/cart_controller.dart';
 import 'package:ees/models/products_home_data_model.dart';
+import 'package:ees/presentation/main_screens/cart_screen/widgets/cart_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
@@ -257,7 +260,10 @@ class CompanyInfo extends StatelessWidget {
               fontSize: 16.sp,
               fontweight: FontWeight.w600),
           1.height,
-          CustomText(text: product.description ?? '', fontSize: 15.sp),
+          CustomText(
+              text: product.description ?? '',
+              fontSize: 15.sp,
+              textAlign: TextAlign.start),
           SizedBox(height: 2.h),
           if (product.properties != null) _CompanyHeader(product),
           if (product.properties != null) _CompanyDetails(product),
@@ -364,9 +370,29 @@ class AddToCartButton extends StatelessWidget {
       child: AppButton(
         "أضف إلى العربة",
         width: 45.w,
+        margin: EdgeInsets.only(bottom: 4.h),
         onTap: () {
-          context.read<CartProvider>().addToCart(product.id,
-              product.variants!.first.id, product.properties!.first.id);
+          context
+              .read<CartProvider>()
+              .addToCart(product.id, product.variants!.first.id,
+                  product.properties!.first.id)
+              .then((val) {
+            log('value >>>>>> $val');
+            if (val != null &&
+                val.toString().contains(
+                    ' السلة تحتوي على منتجات من بائع مختلف، هل تريد مسح السلة الحالية وإضافة المنتج الجديد؟')) {
+              log("mmmmmmmmm?????$val");
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return CartPopup(
+                      productId: product.id.toString(),
+                      variantId: product.variants!.first.id.toString(),
+                      propertyId: product.properties!.first.id.toString(),
+                    );
+                  });
+            }
+          });
         },
       ),
     );

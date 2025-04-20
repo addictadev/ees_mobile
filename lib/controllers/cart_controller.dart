@@ -4,6 +4,7 @@ import 'package:ees/app/utils/network/dio_helper.dart';
 import 'package:ees/app/utils/network/end_points.dart';
 import 'package:ees/app/utils/show_toast.dart';
 import 'package:ees/models/cart_model.dart';
+import 'package:ees/presentation/main_screens/cart_screen/widgets/cart_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
@@ -13,14 +14,49 @@ import '../presentation/main_screens/main_nav_screen.dart';
 class CartProvider with ChangeNotifier {
   TextEditingController noteController = TextEditingController();
   TextEditingController copounCtn = TextEditingController();
-  Future<void> addToCart(var productId, var variantId, var propertyId) async {
+  Future addToCart(var productId, var variantId, var propertyId) async {
+    try {
+      EasyLoading.show(maskType: EasyLoadingMaskType.black);
+      notifyListeners();
+
+      final response = await DioHelper.post(
+        EndPoints.addToCart,
+        data: {
+          "product_id": productId,
+          "variant_id": variantId,
+          "property_id": propertyId,
+        },
+        requiresAuth: true,
+      );
+
+      EasyLoading.dismiss();
+      notifyListeners();
+
+      // التأكد من أن الاستجابة تحتوي على البيانات المطلوبة
+      if (response != null && response['success'] == true) {
+        NavigationManager.navigatToAndFinish(MainScreen(currentIndex: 1));
+        showCustomedToast(response['message'], ToastType.success);
+      } else {
+        showCustomedToast(response?['message'] ?? 'حدث خطأ', ToastType.error);
+      }
+
+      return response; // التأكد من إرجاع الاستجابة
+    } catch (e) {
+      EasyLoading.dismiss();
+      notifyListeners();
+      print('Error: $e');
+      return e.toString(); // التأكد من إرجاع null في حالة الخطأ
+    }
+  }
+
+  ///force Add to cart
+  void forceAddToCart(var productId, var variantId, var propertyId) async {
     try {
       EasyLoading.show(
         maskType: EasyLoadingMaskType.black,
       );
       notifyListeners();
-
-      final response = await DioHelper.post(EndPoints.addToCart,
+      final response = await DioHelper.post(EndPoints.forceAddToCart,
           data: {
             "product_id": productId,
             "variant_id": variantId,
@@ -40,7 +76,6 @@ class CartProvider with ChangeNotifier {
         showCustomedToast(response['message'], ToastType.error);
       }
     } catch (e) {
-      log(e.toString());
       EasyLoading.dismiss();
       notifyListeners();
     }

@@ -3,6 +3,7 @@ import 'package:ees/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../app/utils/app_colors.dart';
 
@@ -16,33 +17,51 @@ class CategoryTabs extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         CustomText(
-            text: 'الاقسام',
-            padding: EdgeInsets.only(bottom: 1.5.h, top: 1.5.h),
-            fontweight: FontWeight.bold,
-            color: AppColors.primary),
+          text: 'الاقسام',
+          padding: EdgeInsets.only(bottom: 1.5.h, top: 1.5.h),
+          fontweight: FontWeight.bold,
+          color: AppColors.primary,
+        ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              // Local "All" tab
               _buildCategoryTab(context, "الكل", null, 0, provider),
-              ...List.generate(categories!.length, (index) {
-                final category = categories[index];
-                return _buildCategoryTab(
-                  context,
-                  category.name ?? "",
-                  category.id,
-                  index + 1,
-                  provider,
-                );
-              }),
+
+              // Show loading skeletons when loading
+              if (provider.isLoadingCategories)
+                ...List.generate(5, (index) => _buildCategorySkeleton()),
+
+              // Else show real categories
+              if (!provider.isLoadingCategories && categories != null)
+                ...List.generate(categories.length, (index) {
+                  final category = categories[index];
+                  return _buildCategoryTab(
+                    context,
+                    category.name ?? "",
+                    category.id,
+                    index + 1,
+                    provider,
+                  );
+                }),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildCategorySkeleton() {
+    return Container(
+      width: 20.w,
+      height: 5.h,
+      margin: EdgeInsets.only(left: 3.w, bottom: 1.5.h),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(3.w),
+      ),
     );
   }
 
@@ -55,11 +74,9 @@ class CategoryTabs extends StatelessWidget {
   ) {
     return GestureDetector(
       onTap: () {
-        // provider.selectedCategory = categoryId;
         provider.setSelectedCategory(index);
-        Provider.of<HomeProvider>(context, listen: false)
-            .getAllHomeProducts(refresh: true);
-        Provider.of<HomeProvider>(context, listen: false).currentPage = 1;
+        provider.getAllHomeProducts(refresh: true);
+        provider.currentPage = 1;
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.w),
