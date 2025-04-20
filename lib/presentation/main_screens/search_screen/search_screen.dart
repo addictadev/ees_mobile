@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/widgets/custom_app_bar.dart';
 import 'package:ees/controllers/home_controller.dart';
+import 'package:ees/presentation/main_screens/home_screen/widgets/filter_bottom_sheet_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -96,16 +98,26 @@ class _SearchScreenState extends State<SearchScreen> {
                           value.searchController.clear();
                           value.getAllHomeProducts(refresh: true);
                         }),
-                    Container(
-                      height: 6.5.h,
-                      width: 6.5.h,
-                      margin: EdgeInsets.only(top: 3.w),
-                      decoration: getBoxDecoration(),
-                      child: Padding(
-                        padding: EdgeInsets.all(4.w),
-                        child: CustomSvgImage(
-                          assetName: AppAssets.filterIcon,
-                          height: 2.w,
+                    InkWell(
+                      onTap: () {
+                        showCupertinoModalPopup(
+                          context: context,
+                          builder: (context) => SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.90,
+                              child: const ProductFilterBottomSheet()),
+                        );
+                      },
+                      child: Container(
+                        height: 6.5.h,
+                        width: 6.5.h,
+                        margin: EdgeInsets.only(top: 3.w),
+                        decoration: getBoxDecoration(),
+                        child: Padding(
+                          padding: EdgeInsets.all(4.w),
+                          child: CustomSvgImage(
+                            assetName: AppAssets.filterIcon,
+                            height: 2.w,
+                          ),
                         ),
                       ),
                     )

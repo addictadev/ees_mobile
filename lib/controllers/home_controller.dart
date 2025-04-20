@@ -158,4 +158,81 @@ class HomeProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+    bool _isInstallmentEnabled = true;
+  String _selectedSorting = '';
+  
+  // Brand filters
+  final Map<String, bool> _brandFilters = {
+    'Siemens': false,
+    'Egypt panel': false,
+  };
+  
+  // Product filters
+  final Map<String, bool> _productTypeFilters = {
+    'خزانة': false,
+    'علبة': false,
+    'قطعة': false,
+  };
+
+  bool _showWidthFilterOption = false;
+  
+  // Getters
+  bool get isInstallmentEnabled => _isInstallmentEnabled;
+  String get selectedSorting => _selectedSorting;
+  Map<String, bool> get brandFilters => Map.unmodifiable(_brandFilters);
+  Map<String, bool> get productTypeFilters => Map.unmodifiable(_productTypeFilters);
+  bool get showWidthFilterOption => _showWidthFilterOption;
+  
+  // List of sorting options
+  final List<String> sortOptions = ['الأكثر مبيعا', 'الأحدث', 'أقل سعر'];
+  
+  // Methods to update state
+  void toggleInstallmentPayment(bool value) {
+    _isInstallmentEnabled = value;
+    notifyListeners();
+  }
+  
+  void updateSorting(String option) {
+    _selectedSorting = option;
+    notifyListeners();
+  }
+  
+  void updateBrandFilter(String brand, bool value) {
+    _brandFilters[brand] = value;
+    notifyListeners();
+  }
+  
+  void updateProductTypeFilter(String type, bool value) {
+    _productTypeFilters[type] = value;
+    notifyListeners();
+  }
+  
+  void toggleWidthFilterOption(bool value) {
+    _showWidthFilterOption = value;
+    notifyListeners();
+  }
+  
+  // Reset all filters
+  void resetFilters() {
+    _isInstallmentEnabled = true;
+    _selectedSorting = 'الأكثر مبيعا';
+    
+    for (var key in _brandFilters.keys) {
+      _brandFilters[key] = false;
+    }
+    
+    for (var key in _productTypeFilters.keys) {
+      _productTypeFilters[key] = false;
+    }
+    
+    _showWidthFilterOption = false;
+    notifyListeners();
+  }
+  
+  // Apply filters
+  void applyFilters() {
+    // This would typically make an API call or update a parent state
+    // For this example, we'll just notify listeners
+    notifyListeners();
+  }
 }
