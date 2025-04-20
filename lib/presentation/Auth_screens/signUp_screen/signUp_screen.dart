@@ -47,16 +47,18 @@ class _SignupScreenState extends State<SignupScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: CupertinoActionSheet(
           cancelButton: CupertinoActionSheetAction(
-            child: Text(
-              'Cancel'.tr(),
-            ),
+            child: Text('الغاء'.tr(),
+                style: GoogleFonts.cairo(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                )),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
           actions: [
             CupertinoActionSheetAction(
-              child: Text("Take a Photo".tr(),
+              child: Text("التقاط صورة".tr(),
                   style: GoogleFonts.cairo(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -69,7 +71,7 @@ class _SignupScreenState extends State<SignupScreen> {
               },
             ),
             CupertinoActionSheetAction(
-              child: Text("Upload Photo".tr(),
+              child: Text("اختار صورة".tr(),
                   style: GoogleFonts.cairo(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,

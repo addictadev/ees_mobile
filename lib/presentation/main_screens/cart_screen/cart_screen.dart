@@ -9,10 +9,12 @@ import 'package:ees/app/widgets/style.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../app/widgets/app_text_field.dart';
+import '../../../app/widgets/loginFrist.dart';
 import '../../../controllers/cart_controller.dart';
 import 'package:provider/provider.dart';
 
 import '../home_screen/widgets/homeAppBar.dart';
+import '../widgets/drawer.dart';
 import 'widgets/cart_item.dart';
 import 'widgets/empty_cart.dart';
 import 'widgets/minu_order_widget.dart';
@@ -29,7 +31,8 @@ class _CartScreenState extends State<CartScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      Provider.of<CartProvider>(context, listen: false).getCartItems();
+      if (IsLogin())
+        Provider.of<CartProvider>(context, listen: false).getCartItems();
     });
   }
 
@@ -53,67 +56,77 @@ class _CartScreenState extends State<CartScreen> {
     return Consumer<CartProvider>(
         builder: (BuildContext context, value, Widget? child) {
       return Scaffold(
-        bottomSheet: value.isLoadingGetCart
-            ? SizedBox()
-            : cartProvider.cartModel?.data!.items != Null &&
-                    cartProvider.cartModel!.data!.items!.isNotEmpty &&
-                    totalPrice >= cartMin
-                ? _buildBottomBar(cartProvider)
-                : SizedBox(),
+        bottomSheet: IsLogin()
+            ? value.isLoadingGetCart
+                ? SizedBox()
+                : cartProvider.cartModel?.data!.items != Null &&
+                        cartProvider.cartModel!.data!.items!.isNotEmpty &&
+                        totalPrice >= cartMin
+                    ? _buildBottomBar(cartProvider)
+                    : SizedBox()
+            : null,
         body: Column(
           children: [
             HomeAppBar(text: 'العربة', isHome: false),
             Expanded(
-              child: value.isLoadingGetCart || cartProvider.cartModel == null
-                  ? loadingIndicator
-                  : value.hasErrorGetCart
-                      ? ErrorView(onReload: () {
-                          cartProvider.getCartItems();
-                        })
-                      : value.cartModel!.data!.items!.isEmpty
-                          ? EmptyCart()
-                          : SingleChildScrollView(
-                              physics: BouncingScrollPhysics(),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 6.w, vertical: 3.w),
-                              child: Column(
-                                children: [
-                                  _buildHeader(value),
-                                  _buildOrderSummary(cartProvider),
-                                  2.height,
-                                  _buildPaymentMethod(),
-                                  2.height,
-                                  Container(
-                                    margin: EdgeInsets.only(bottom: 2.h),
-                                    decoration: BoxDecoration(
-                                      border:
-                                          Border.all(color: AppColors.primary),
-                                      borderRadius: BorderRadius.circular(2.w),
-                                    ),
-                                    child: ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: cartProvider
-                                          .cartModel?.data!.items!.length,
-                                      itemBuilder: (context, index) {
-                                        return CartItemWidget(
-                                            cartItem: cartProvider.cartModel!
-                                                .data!.items![index]);
-                                      },
-                                    ),
+              child: IsLogin()
+                  ? value.isLoadingGetCart || cartProvider.cartModel == null
+                      ? loadingIndicator
+                      : value.hasErrorGetCart
+                          ? ErrorView(onReload: () {
+                              cartProvider.getCartItems();
+                            })
+                          : value.cartModel!.data!.items!.isEmpty
+                              ? EmptyCart()
+                              : SingleChildScrollView(
+                                  physics: BouncingScrollPhysics(),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 6.w, vertical: 3.w),
+                                  child: Column(
+                                    children: [
+                                      _buildHeader(value),
+                                      _buildOrderSummary(cartProvider),
+                                      2.height,
+                                      _buildPaymentMethod(),
+                                      2.height,
+                                      Container(
+                                        margin: EdgeInsets.only(bottom: 2.h),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: AppColors.primary),
+                                          borderRadius:
+                                              BorderRadius.circular(2.w),
+                                        ),
+                                        child: ListView.builder(
+                                          padding: EdgeInsets.zero,
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemCount: cartProvider
+                                              .cartModel?.data!.items!.length,
+                                          itemBuilder: (context, index) {
+                                            return CartItemWidget(
+                                                cartItem: cartProvider
+                                                    .cartModel!
+                                                    .data!
+                                                    .items![index]);
+                                          },
+                                        ),
+                                      ),
+                                      if (cartProvider
+                                              .cartModel?.data!.discount ==
+                                          0)
+                                        _promoCodeSection(),
+                                      if (cartProvider
+                                              .cartModel?.data!.discount ==
+                                          0)
+                                        2.height,
+                                      _noteSection(),
+                                      9.height
+                                    ],
                                   ),
-                                  if (cartProvider.cartModel?.data!.discount ==
-                                      0)
-                                    _promoCodeSection(),
-                                  if (cartProvider.cartModel?.data!.discount ==
-                                      0)
-                                    2.height,
-                                  _noteSection(),
-                                  9.height
-                                ],
-                              ),
-                            ),
+                                )
+                  : LoginFristWidget(),
             ),
           ],
         ),

@@ -1,6 +1,8 @@
 import 'package:cherry_toast/resources/constants.dart';
 import 'package:ees/app/extensions/sized_box_extension.dart';
 import 'package:ees/app/images_preview/custom_cashed_network_image.dart';
+import 'package:ees/app/images_preview/photo_view.dart';
+import 'package:ees/app/navigation_services/navigation_manager.dart';
 import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/widgets/app_button.dart';
@@ -56,14 +58,18 @@ class ProductHeader extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ClipRRect(
-            borderRadius: BorderRadius.circular(2.w),
-            child: CustomCachedImage(
-              imageUrl: product.image ?? '',
-              width: 20.w,
-              height: 20.w,
-              fit: BoxFit.contain,
-            )),
+        InkWell(
+          onTap: () => NavigationManager.navigatTo(
+              PhotoViewPage(imageUrl: product.image ?? "")),
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(2.w),
+              child: CustomCachedImage(
+                imageUrl: product.image ?? '',
+                width: 20.w,
+                height: 20.w,
+                fit: BoxFit.contain,
+              )),
+        ),
         2.width,
         Expanded(
           child: Column(

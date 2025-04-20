@@ -149,19 +149,14 @@ class _AppTextFieldState extends State<AppTextField> {
               borderRadius: BorderRadius.all(Radius.circular(2.w)),
             ),
             prefixIcon: widget.prefixIcon,
-            suffixIcon: widget.controller!.text.isNotEmpty
-                ? IconButton(
-                    onPressed: () {
-                      widget.controller!.clear();
-                      setState(() {}); // Refresh to hide suffix icon
-                      if (widget.suffixIconOnTap != null) {
-                        widget.suffixIconOnTap!();
-                      }
-                    },
-                    icon: Icon(Icons.close,
-                        color: widget.suffixColor, size: widget.suffixSize),
-                  )
-                : null,
+            suffixIcon: widget.trailingIcon ??
+                IconButton(
+                    onPressed: widget.suffixIconOnTap,
+                    icon: Icon(
+                      widget.suffixIcon,
+                      color: widget.suffixColor,
+                      size: widget.suffixSize,
+                    )),
           ),
         ),
       ),

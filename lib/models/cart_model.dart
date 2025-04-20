@@ -104,7 +104,7 @@ class Product {
   int? id;
   String? name;
   String? package;
-  Null brand;
+  String? brand;
   String? image;
 
   Product({this.id, this.name, this.package, this.brand, this.image});

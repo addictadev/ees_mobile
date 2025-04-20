@@ -93,19 +93,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: CustomSvgImage(assetName: AppAssets.searchIcon),
                     ),
                   ),
-                  Container(
-                    height: 7.h,
-                    width: 7.h,
-                    margin: EdgeInsets.only(top: 3.w),
-                    decoration: getBoxDecoration(),
-                    child: Padding(
-                      padding: EdgeInsets.all(4.w),
-                      child: CustomSvgImage(
-                        assetName: AppAssets.filterIcon,
-                        height: 2.w,
-                      ),
-                    ),
-                  )
+                  GestureDetector(
+                      onTap: () => NavigationManager.navigatTo(SearchScreen()),
+                      child: Container(
+                        height: 6.5.h,
+                        width: 6.5.h,
+                        margin: EdgeInsets.only(top: 3.w),
+                        decoration: getBoxDecoration(),
+                        child: Padding(
+                          padding: EdgeInsets.all(4.w),
+                          child: CustomSvgImage(
+                            assetName: AppAssets.filterIcon,
+                            height: 2.w,
+                          ),
+                        ),
+                      ))
                 ],
               ),
             ),

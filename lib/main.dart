@@ -6,6 +6,7 @@ import 'package:ees/app/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 
@@ -76,17 +77,15 @@ class NoInternetWidget extends StatelessWidget {
                 color: AppColors.primary,
               ),
               const SizedBox(height: 20),
-              const Text(
-                "لا يوجد اتصال بالانترنت",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              Text("لا يوجد اتصال بالانترنت",
+                  style: GoogleFonts.cairo(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  )),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 "من فضلك تأكد من اتصالك بالانترنت",
-                style: TextStyle(
+                style: GoogleFonts.cairo(
                   fontSize: 14,
                   color: Colors.grey,
                 ),
@@ -99,12 +98,12 @@ class NoInternetWidget extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   "اعادة المحاولة",
-                  style: TextStyle(
+                  style: GoogleFonts.cairo(
                     color: Colors.white,
                     fontSize: 16,
                   ),

@@ -14,7 +14,6 @@ import '../../../app/utils/app_colors.dart';
 import '../../../app/utils/show_toast.dart';
 import '../../../app/widgets/app_text_field.dart';
 import '../../../app/widgets/style.dart';
-import '../../Auth_screens/widget/custom_auth_appBar.dart';
 import '../home_screen/widgets/products_home_grids.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -25,7 +24,6 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  @override
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -99,8 +97,8 @@ class _SearchScreenState extends State<SearchScreen> {
                           value.getAllHomeProducts(refresh: true);
                         }),
                     Container(
-                      height: 7.h,
-                      width: 7.h,
+                      height: 6.5.h,
+                      width: 6.5.h,
                       margin: EdgeInsets.only(top: 3.w),
                       decoration: getBoxDecoration(),
                       child: Padding(

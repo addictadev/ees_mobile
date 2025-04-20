@@ -74,9 +74,7 @@ class Validator {
     if (value == null || value.isEmpty) {
       return "هذا الحقل مطلوب".tr();
     } else if (!RegExp(r'^01\d{9}$').hasMatch(value)) {
-      return "Enter a valid phone number that starts with 01 and is 11 digits"
-          .tr()
-          .tr();
+      return "يجب ادخال رقم هاتف صحيح يبدأ ب 01 ويتكون من 11 رقم".tr();
     } else {
       return null;
     }
@@ -106,7 +104,8 @@ class Validator {
       } else if (value.length < 8 ||
           !RegExp(r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
               .hasMatch(value)) {
-        return "error_password_validation".tr();
+        return "يجب أن تتكون كلمةالمرور من ٨ أحرف منهم حرف كبير على الأقل وحرف صغير على الأقل ورقم وعلامة مميزة"
+            .tr();
       }
     }
     return null;

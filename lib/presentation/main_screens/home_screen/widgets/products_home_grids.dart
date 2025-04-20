@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../../../controllers/cart_controller.dart';
+
 class ProductGrid extends StatelessWidget {
   const ProductGrid({super.key});
 
@@ -43,7 +45,7 @@ class ProductGrid extends StatelessWidget {
           shrinkWrap: true,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.7,
+            childAspectRatio: 0.72,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
           ),
@@ -78,7 +80,7 @@ class ProductGrid extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 14.h,
+              height: 13.h,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(3.w),
@@ -90,7 +92,7 @@ class ProductGrid extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(height: 1.h),
+            SizedBox(height: .5.h),
             Text(
               product.name ?? '',
               style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
@@ -113,23 +115,29 @@ class ProductGrid extends StatelessWidget {
                 style: TextStyle(
                   fontSize: AppFonts.t5,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.grey,
+                  // color: AppColors.grey,
                 ),
               ),
             const Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(product.variants!.first.maxQuantity.toString() +
+                Text(product.variants!.first.minQuantity.toString() +
                     " " +
                     product.package!),
-                Container(
-                  padding: EdgeInsets.all(1.w),
-                  decoration: getBoxDecoration(
-                    fillColor: AppColors.primary,
-                    radus: 1.w,
+                InkWell(
+                  onTap: () => context.read<CartProvider>().addToCart(
+                      product.id,
+                      product.variants!.first.id,
+                      product.properties!.first.id),
+                  child: Container(
+                    padding: EdgeInsets.all(.7.w),
+                    decoration: getBoxDecoration(
+                      fillColor: AppColors.primary,
+                      radus: 1.w,
+                    ),
+                    child: const Icon(Icons.add, color: Colors.white),
                   ),
-                  child: const Icon(Icons.add, color: Colors.white),
                 ),
               ],
             ),

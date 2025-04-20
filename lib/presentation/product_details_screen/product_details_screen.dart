@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:ees/app/widgets/custom_app_bar.dart';
 import 'package:ees/models/products_home_data_model.dart';
+import 'package:ees/presentation/main_screens/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
 import 'widgets/product_card.dart';
@@ -23,13 +24,20 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       body: Column(
         children: [
           CustomeAppBar(text: widget.product.name ?? ''),
-          Column(
-            children: [
-              ProductCard(product: widget.product),
-              Divider(),
-              CompanyInfo(product: widget.product),
-              AddToCartButton(product: widget.product),
-            ],
+          Expanded(
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  ProductCard(product: widget.product),
+                  Divider(),
+                  CompanyInfo(product: widget.product),
+                  IsLogin()
+                      ? AddToCartButton(product: widget.product)
+                      : SizedBox(),
+                ],
+              ),
+            ),
           )
         ],
       ),

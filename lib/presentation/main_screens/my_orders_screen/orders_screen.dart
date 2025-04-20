@@ -1,7 +1,9 @@
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/utils/show_toast.dart';
+import 'package:ees/app/widgets/loginFrist.dart';
 import 'package:ees/app/widgets/style.dart';
 import 'package:ees/controllers/orders_controller.dart';
+import 'package:ees/presentation/main_screens/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -25,8 +27,10 @@ class _OrdersScreenState extends State<OrdersScreen>
   void initState() {
     super.initState();
     Future.microtask(() {
-      Provider.of<OrdersController>(context, listen: false)
-          .getAllOrders("pending");
+      if (IsLogin()) {
+        Provider.of<OrdersController>(context, listen: false)
+            .getAllOrders("pending");
+      }
     });
     _tabController = TabController(length: 3, vsync: this);
 
@@ -50,8 +54,10 @@ class _OrdersScreenState extends State<OrdersScreen>
           status = "pending";
       }
 
-      Provider.of<OrdersController>(context, listen: false)
-          .getAllOrders(status);
+      if (IsLogin()) {
+        Provider.of<OrdersController>(context, listen: false)
+            .getAllOrders(status);
+      }
     });
   }
 
@@ -76,33 +82,10 @@ class _OrdersScreenState extends State<OrdersScreen>
                   fillColor: AppColors.grey, withShadwos: false),
               child: TabBar(
                 controller: _tabController,
-                // onTap: (index) {
-                //   String status;
-                //   switch (index) {
-                //     case 0:
-                //       status = "PENDING";
-                //       break;
-                //     case 1:
-                //       status = "ACCEPTED";
-                //       break;
-                //     case 2:
-                //       status = "FINISHED";
-                //       break;
-                //     default:
-                //       status = "PENDING";
-                //   }
-
-                //   Provider.of<OrdersController>(context, listen: false)
-                //       .getAllOrders(status);
-                // },
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicator: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(1.w),
-
-                  // border: Border.all(
-                  //     color: Colors.grey,
-                  //     width: 1.5), // Gray border for selected tab
                 ),
                 labelStyle: TextStyle(
                   fontSize: 15.sp,
@@ -125,32 +108,33 @@ class _OrdersScreenState extends State<OrdersScreen>
               ),
             ),
             Expanded(
-              child: value.isLoadingAllOrders
-                  ? Center(
-                      child: loadingIndicator,
-                    )
-                  : TabBarView(
-                      physics: BouncingScrollPhysics(),
-                      controller: _tabController,
-                      children: [
-                        InvoiceTab(
-                          type: 'current',
-                          status: "pending",
-                          orderList: value.ordersModel?.orderList ?? [],
-                        ),
-                        InvoiceTab(
-                          type: 'confirmed',
-                          status: "accepted",
-                          orderList: value.ordersModel?.orderList ?? [],
-                        ),
-                        InvoiceTab(
-                          type: 'previous',
-                          status: "finished",
-                          orderList: value.ordersModel?.orderList ?? [],
-                        ),
-                      ],
-                    ),
-            )
+                child: IsLogin()
+                    ? value.isLoadingAllOrders
+                        ? Center(
+                            child: loadingIndicator,
+                          )
+                        : TabBarView(
+                            physics: BouncingScrollPhysics(),
+                            controller: _tabController,
+                            children: [
+                              InvoiceTab(
+                                type: 'current',
+                                status: "pending",
+                                orderList: value.ordersModel?.orderList ?? [],
+                              ),
+                              InvoiceTab(
+                                type: 'confirmed',
+                                status: "accepted",
+                                orderList: value.ordersModel?.orderList ?? [],
+                              ),
+                              InvoiceTab(
+                                type: 'previous',
+                                status: "finished",
+                                orderList: value.ordersModel?.orderList ?? [],
+                              ),
+                            ],
+                          )
+                    : LoginFristWidget())
           ],
         );
       }),

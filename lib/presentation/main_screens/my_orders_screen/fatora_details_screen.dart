@@ -111,13 +111,17 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                           ),
                         ),
                         Container(
-                          decoration: getBoxDecoration(),
-                          padding: EdgeInsets.all(3.w),
+                          width: 100.w,
+                          decoration: getBoxDecoration(
+                              borderColor: AppColors.primary,
+                              withShadwos: false),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 3.w, vertical: 4.w),
                           margin: EdgeInsets.symmetric(vertical: 2.h),
                           child: CustomText(
-                            text: widget.orderDetails.note ?? '',
-                            fontSize: 15.sp,
-                          ),
+                              text: widget.orderDetails.note ?? '',
+                              fontSize: 15.sp,
+                              textAlign: TextAlign.start),
                         ),
                       ],
                     ),
