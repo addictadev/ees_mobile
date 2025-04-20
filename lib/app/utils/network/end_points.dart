@@ -35,4 +35,5 @@ class EndPoints {
   static const String getStaticPage = "privacy/get-all";
   static const String changePassword = 'profile/update-password';
   static const String logout = 'auth/logout';
+  static const String getAllBrands = "brands/get-all";
 }

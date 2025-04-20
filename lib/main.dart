@@ -132,8 +132,9 @@ Future<void> main() async {
   await Future.wait([
     initDependencyInjection(),
     translator.init(
-      localeType: LocalizationDefaultType.device,
-      languagesList: <String>['ar', 'en'],
+      language: 'ar',
+      localeType: LocalizationDefaultType.asDefined,
+      languagesList: <String>['ar'],
       assetsDirectory: 'assets/translation/',
     ),
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]),

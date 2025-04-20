@@ -1,4 +1,5 @@
 import 'package:ees/app/utils/app_colors.dart';
+import 'package:ees/app/utils/show_toast.dart';
 import 'package:ees/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,11 +15,27 @@ class ProductFilterBottomSheet extends StatelessWidget {
   }
 }
 
-class _ProductFilterBottomSheetContent extends StatelessWidget {
+class _ProductFilterBottomSheetContent extends StatefulWidget {
   const _ProductFilterBottomSheetContent();
 
   @override
+  State<_ProductFilterBottomSheetContent> createState() =>
+      _ProductFilterBottomSheetContentState();
+}
+
+class _ProductFilterBottomSheetContentState
+    extends State<_ProductFilterBottomSheetContent> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      Provider.of<HomeProvider>(context, listen: false).getAllBrands();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<HomeProvider>(context);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
@@ -30,42 +47,47 @@ class _ProductFilterBottomSheetContent extends StatelessWidget {
             topRight: Radius.circular(12),
           ),
         ),
-        child: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 10),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            _buildHeader(),
-            _buildInstallmentToggle(),
-            Expanded(
-              child: CupertinoScrollbar(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  children: const [
-                    Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: provider.isLoadingBrands
+            ? loadingIndicator
+            : Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  _buildHeader(),
+                  Expanded(
+                    child: CupertinoScrollbar(
+                      child: ListView(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         children: [
-                          _ProductTypeFilterSection(),
-                          _BrandFilterSection(),
-                        ]),
-                    Divider(height: 32),
-                    _NewestOffers(),
-                    Divider(height: 32),
-                    _SortingSection(),
-                    _BottomButtons(),
-                  ],
-                ),
+                          Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: provider.listOfBrands.isEmpty
+                                  ? MainAxisAlignment.start
+                                  : MainAxisAlignment.spaceBetween,
+                              children: [
+                                provider.listOfBrands.isEmpty
+                                    ? const SizedBox()
+                                    : _BrandFilterSection(),
+                                _ProductTypeFilterSection(),
+                              ]),
+                          Divider(height: 32),
+                          _NewestOffers(),
+                          Divider(height: 32),
+                          _SortingSection(),
+                          _BottomButtons(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -90,49 +112,6 @@ class _ProductFilterBottomSheetContent extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildInstallmentToggle() {
-    return Consumer<HomeProvider>(
-      builder: (context, provider, _) {
-        return Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: Colors.grey[200]!),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Text(
-                    'طريقة الدفع',
-                    style: TextStyle(
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    '(كاش)',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.blue[600],
-                    ),
-                  ),
-                ],
-              ),
-              CupertinoSwitch(
-                value: provider.isInstallmentEnabled,
-                onChanged: provider.toggleInstallmentPayment,
-                activeColor: Colors.blue,
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }
@@ -200,7 +179,10 @@ class _BrandFilterSection extends StatelessWidget {
             ),
           ),
         ),
-        ...provider.brandFilters.entries.map((entry) {
+        ...provider.listOfBrands.map((entry) {
+          final isSelected =
+              provider.selectedBrandIds.contains(entry.id.toString());
+
           return SizedBox(
             height: 40,
             child: Row(
@@ -210,9 +192,11 @@ class _BrandFilterSection extends StatelessWidget {
                   height: 24,
                   child: Checkbox(
                     activeColor: AppColors.primary,
-                    value: entry.value,
+                    value: isSelected,
                     onChanged: (bool? value) {
-                      provider.updateBrandFilter(entry.key, value!);
+                      if (value != null) {
+                        provider.updateBrandFilter(entry.id.toString(), value);
+                      }
                     },
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
@@ -221,7 +205,7 @@ class _BrandFilterSection extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  entry.key,
+                  entry.name ?? '',
                   style: const TextStyle(fontSize: 14),
                 ),
               ],
@@ -286,32 +270,6 @@ class _ProductTypeFilterSection extends StatelessWidget {
             ),
           );
         }),
-        SizedBox(
-          height: 40,
-          child: Row(
-            children: [
-              SizedBox(
-                width: 24,
-                height: 24,
-                child: Checkbox(
-                  activeColor: AppColors.primary,
-                  value: provider.showWidthFilterOption,
-                  onChanged: (bool? value) {
-                    provider.toggleWidthFilterOption(value!);
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              const Text(
-                'احدد العرض',
-                style: TextStyle(fontSize: 14),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -377,11 +335,7 @@ class _BottomButtons extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: Colors.grey[200]!),
-        ),
-      ),
+      decoration: BoxDecoration(),
       child: Row(
         children: [
           Expanded(
