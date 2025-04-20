@@ -1,8 +1,8 @@
-// product_filter_bottom_sheet.dart
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class ProductFilterBottomSheet extends StatelessWidget {
@@ -32,7 +32,6 @@ class _ProductFilterBottomSheetContent extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // Drag indicator
             Container(
               margin: const EdgeInsets.only(top: 10),
               width: 40,
@@ -42,13 +41,8 @@ class _ProductFilterBottomSheetContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            // Header
             _buildHeader(),
-
-            // Product type toggle
             _buildInstallmentToggle(),
-
-            // Filter sections
             Expanded(
               child: CupertinoScrollbar(
                 child: ListView(
@@ -56,25 +50,20 @@ class _ProductFilterBottomSheetContent extends StatelessWidget {
                   children: const [
                     Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Brand filters
-                          _BrandFilterSection(),
-
-                          // Product type filters
                           _ProductTypeFilterSection(),
+                          _BrandFilterSection(),
                         ]),
-
                     Divider(height: 32),
-
-                    // Sorting options
+                    _NewestOffers(),
+                    Divider(height: 32),
                     _SortingSection(),
                     _BottomButtons(),
                   ],
                 ),
               ),
             ),
-            // Bottom buttons
           ],
         ),
       ),
@@ -144,6 +133,49 @@ class _ProductFilterBottomSheetContent extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _NewestOffers extends StatelessWidget {
+  const _NewestOffers();
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<HomeProvider>(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ...provider.newestOffersFilters.entries.map((entry) {
+          return SizedBox(
+            height: 40,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Checkbox(
+                    activeColor: AppColors.primary,
+                    value: entry.value,
+                    onChanged: (bool? value) {
+                      provider.updateNewestOffersFilter(entry.key, value!);
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  entry.key,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
+          );
+        }),
+      ],
     );
   }
 }
@@ -221,7 +253,6 @@ class _ProductTypeFilterSection extends StatelessWidget {
             ),
           ),
         ),
-        // Display standard product type filters
         ...provider.productTypeFilters.entries.map((entry) {
           return SizedBox(
             height: 40,
@@ -255,7 +286,6 @@ class _ProductTypeFilterSection extends StatelessWidget {
             ),
           );
         }),
-        // Width filter option
         SizedBox(
           height: 40,
           child: Row(
@@ -362,9 +392,11 @@ class _BottomButtons extends StatelessWidget {
                 provider.resetFilters();
                 Navigator.pop(context);
               },
-              child: const Text(
+              child: Text(
                 'تراجع',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(
+                    color: Colors.red,
+                    fontFamily: GoogleFonts.cairo().fontFamily),
               ),
             ),
           ),
@@ -379,9 +411,11 @@ class _BottomButtons extends StatelessWidget {
                 provider.applyFilters();
                 Navigator.pop(context);
               },
-              child: const Text(
+              child: Text(
                 'تطبيق',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: GoogleFonts.cairo().fontFamily),
               ),
             ),
           ),
