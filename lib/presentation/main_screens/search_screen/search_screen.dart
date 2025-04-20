@@ -103,7 +103,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         showCupertinoModalPopup(
                           context: context,
                           builder: (context) => SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.90,
+                              height: MediaQuery.of(context).size.height * 0.8,
                               child: const ProductFilterBottomSheet()),
                         );
                       },
@@ -148,6 +148,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                         )
                       : SingleChildScrollView(
+                          padding: EdgeInsets.all(4.w),
                           controller: _scrollController,
                           physics: BouncingScrollPhysics(),
                           child: Column(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 
 class ProductFilterBottomSheet extends StatelessWidget {
   const ProductFilterBottomSheet({super.key});
@@ -39,7 +40,7 @@ class _ProductFilterBottomSheetContentState
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.85,
+        height: MediaQuery.of(context).size.height * 0.7,
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -52,8 +53,8 @@ class _ProductFilterBottomSheetContentState
             : Column(
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    width: 40,
+                    margin: EdgeInsets.only(top: 3.w),
+                    width: 35.w,
                     height: 4,
                     decoration: BoxDecoration(
                       color: Colors.grey[300],
@@ -64,7 +65,7 @@ class _ProductFilterBottomSheetContentState
                   Expanded(
                     child: CupertinoScrollbar(
                       child: ListView(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: 4.5.w),
                         children: [
                           Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,7 +306,7 @@ class _SortingSection extends StatelessWidget {
                     Radio<String>(
                       activeColor: AppColors.primary,
                       value: option,
-                      groupValue: provider.selectedSorting,
+                      groupValue: provider.selectedSortingText,
                       onChanged: (String? value) {
                         provider.updateSorting(value!);
                       },
@@ -334,29 +335,12 @@ class _BottomButtons extends StatelessWidget {
     final provider = Provider.of<HomeProvider>(context);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(2.w),
       decoration: BoxDecoration(),
       child: Row(
         children: [
           Expanded(
             flex: 2,
-            child: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                provider.resetFilters();
-                Navigator.pop(context);
-              },
-              child: Text(
-                'تراجع',
-                style: TextStyle(
-                    color: Colors.red,
-                    fontFamily: GoogleFonts.cairo().fontFamily),
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            flex: 3,
             child: CupertinoButton(
               padding: const EdgeInsets.symmetric(vertical: 12),
               color: AppColors.primary,
@@ -369,6 +353,23 @@ class _BottomButtons extends StatelessWidget {
                 'تطبيق',
                 style: TextStyle(
                     color: Colors.white,
+                    fontFamily: GoogleFonts.cairo().fontFamily),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            flex: 2,
+            child: CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                provider.resetFilters();
+                Navigator.pop(context);
+              },
+              child: Text(
+                'تراجع',
+                style: TextStyle(
+                    color: Colors.red,
                     fontFamily: GoogleFonts.cairo().fontFamily),
               ),
             ),

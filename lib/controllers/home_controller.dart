@@ -198,6 +198,7 @@ class HomeProvider extends ChangeNotifier {
 
   bool _isInstallmentEnabled = false;
   String _selectedSorting = '';
+  String _selectedSortingText = '';
 
   // Brand filters
   final Map<String, bool> _brandFilters = {
@@ -219,6 +220,7 @@ class HomeProvider extends ChangeNotifier {
   // Getters
   bool get isInstallmentEnabled => _isInstallmentEnabled;
   String get selectedSorting => _selectedSorting;
+  String get selectedSortingText => _selectedSortingText;
   Map<String, bool> get brandFilters => Map.unmodifiable(_brandFilters);
   Map<String, bool> get productTypeFilters =>
       Map.unmodifiable(_productTypeFilters);
@@ -242,8 +244,22 @@ class HomeProvider extends ChangeNotifier {
   }
 
   void updateSorting(String option) {
-    _selectedSorting = option;
-    notifyListeners();
+    if (option == 'الأكثر مبيعا') {
+      _selectedSorting = 'most_ordered';
+
+      _selectedSortingText = option;
+
+      notifyListeners();
+    } else if (option == 'الأحدث') {
+      _selectedSorting = 'newest';
+      _selectedSortingText = option;
+
+      notifyListeners();
+    } else if (option == 'أقل سعر') {
+      _selectedSorting = 'lowest_price';
+      _selectedSortingText = option;
+      notifyListeners();
+    }
   }
 
   final Set<String> _selectedBrandIds = {};
