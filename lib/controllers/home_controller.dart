@@ -151,7 +151,10 @@ class HomeProvider extends ChangeNotifier {
           if (selectedVendor != null) 'property_id': selectedVendor,
           if (_selectedSorting.isNotEmpty || _selectedSorting != '')
             'sort_by': _selectedSorting,
-          if (_selectedBrandIds.isNotEmpty) "brand_id": _selectedBrandIds,
+          if (_selectedBrandIds.isNotEmpty)
+            "brand_id": _selectedBrandIds.toList(),
+          if (selectedProductTypes.isNotEmpty) "package": selectedProductTypes,
+          if (_newestOffersFilters == true) "sort_by": "most_ordered",
         },
         requiresAuth: true,
       );
@@ -222,6 +225,12 @@ class HomeProvider extends ChangeNotifier {
   Map<String, bool> get newestOffersFilters =>
       Map.unmodifiable(_newestOffersFilters);
   bool get showWidthFilterOption => _showWidthFilterOption;
+  List<String> get selectedProductTypes {
+    return _productTypeFilters.entries
+        .where((entry) => entry.value == true)
+        .map((entry) => entry.key)
+        .toList();
+  }
 
   // List of sorting options
   final List<String> sortOptions = ['الأكثر مبيعا', 'الأحدث', 'أقل سعر'];
@@ -279,6 +288,9 @@ class HomeProvider extends ChangeNotifier {
     }
 
     _showWidthFilterOption = false;
+    _selectedBrandIds.clear();
+    selectedProductTypes.clear();
+    getAllHomeProducts(refresh: true);
     notifyListeners();
   }
 
