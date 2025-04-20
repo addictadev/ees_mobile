@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ConstsClass {
   factory ConstsClass() {
@@ -9,6 +10,12 @@ class ConstsClass {
   static const String jwtTOKEN = "authToken";
   static const String refreshTOKEN = "refreshToken";
   static const String fullNameKey = "fullName";
+  static const String shopNameKey = "shopName";
+  static const String shopDelegateNameKey = "delegate_name";
+  static const String shopAddressKey = "shopAddress";
+  static const String shopCityKey = "shopCity";
+  static const String shopTypeKey = "shopType";
+  static const String shopLogoKey = "shopLogo";
   static const String mobileNumberKey = "mobileNumber";
   static const String emailKey = "email";
   static const String userIdKey = "uuid";
@@ -31,5 +38,14 @@ String formatOrderDate(String? dateStr) {
     return DateFormat('d MMMM y - hh:mm a', 'ar').format(dateTime);
   } catch (e) {
     return dateStr; // fallback to original if parsing fails
+  }
+}
+
+Future<void> openLink(var url) async {
+  if (!await launchUrl(
+    Uri.parse(url),
+    mode: LaunchMode.externalApplication,
+  )) {
+    throw Exception('Could not launch $url');
   }
 }

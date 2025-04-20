@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ees/models/categoreisModel.dart';
+import 'package:ees/models/home_slider.dart';
 import 'package:ees/models/products_home_data_model.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,8 @@ class HomeProvider extends ChangeNotifier {
   bool isLoadingVendors = false;
   bool isLoadingProducts = false;
   ProductsHomeDataModel? productsModel;
+  HomeSliderModel? sliderModel;
+  bool isLoadingSlider = false;
   int currentPage = 1;
   bool hasMorePages = true;
 
@@ -57,6 +60,31 @@ class HomeProvider extends ChangeNotifier {
     } finally {
       isLoadingCategories = false;
       notifyListeners();
+    }
+  }
+
+/////get All home slider
+
+  void getAllHomeSlider() async {
+    if (sliderModel != null) {
+      return;
+    }
+    try {
+      isLoadingSlider = true;
+      notifyListeners();
+      final response =
+          await DioHelper.get(EndPoints.getAllSliders, requiresAuth: true);
+      if (response['success'] == true) {
+        sliderModel = HomeSliderModel.fromJson(response);
+        isLoadingSlider = false;
+        notifyListeners();
+      } else {
+        isLoadingSlider = false;
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.error);
+      }
+    } catch (e) {
+      isLoadingSlider = false;
     }
   }
 

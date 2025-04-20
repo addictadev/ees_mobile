@@ -223,7 +223,19 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
             ConstsClass.jwtTOKEN, response['data']['token']);
         sharedPref.setString(
             ConstsClass.fullNameKey, response['data']['user']['name'] ?? "");
-            
+        sharedPref.setString(ConstsClass.shopNameKey,
+            response['data']['user']['properties'][0]['name'] ?? "");
+        sharedPref.setString(ConstsClass.shopDelegateNameKey,
+            response['data']['user']['properties'][0]['delegate_name'] ?? "");
+        sharedPref.setString(ConstsClass.shopAddressKey,
+            response['data']['user']['properties'][0]['address'] ?? "");
+        sharedPref.setString(ConstsClass.shopTypeKey,
+            response['data']['user']['properties'][0]['property_type'] ?? "");
+        sharedPref.setString(ConstsClass.shopCityKey,
+            response['data']['user']['properties'][0]['city'] ?? "");
+        sharedPref.setString(ConstsClass.shopLogoKey,
+            response['data']['user']['properties'][0]['logo'] ?? "");
+
         sharedPref.setInt(
             ConstsClass.userIdKey, response['data']['user']['id'] ?? "");
 

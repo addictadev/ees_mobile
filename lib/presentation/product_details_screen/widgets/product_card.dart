@@ -259,8 +259,8 @@ class CompanyInfo extends StatelessWidget {
           1.height,
           CustomText(text: product.description ?? '', fontSize: 15.sp),
           SizedBox(height: 2.h),
-          _CompanyHeader(product),
-          _CompanyDetails(product),
+          if (product.properties != null) _CompanyHeader(product),
+          if (product.properties != null) _CompanyDetails(product),
           SizedBox(height: 2.h),
           Divider()
         ],

@@ -30,4 +30,5 @@ class EndPoints {
   static const String cancelOrder = "order/";
   static const String cancelOrderItem = "order/order-items/";
   static const String acceptOrderEdit = "order/accept-update/";
+  static const String getAllSliders = "sliders/get-all";
 }
