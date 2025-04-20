@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ees/models/categoreisModel.dart';
+import 'package:ees/models/get_all_brands_model.dart';
 import 'package:ees/models/home_slider.dart';
 import 'package:ees/models/products_home_data_model.dart';
 import 'package:flutter/material.dart';
@@ -121,7 +122,9 @@ class HomeProvider extends ChangeNotifier {
   TextEditingController searchHome = TextEditingController();
 
   /////get all products with pagination///////
-  Future<void> getAllHomeProducts({bool refresh = false}) async {
+  Future<void> getAllHomeProducts({
+    bool refresh = false,
+  }) async {
     if (refresh) {
       currentPage = 1;
       hasMorePages = true;
@@ -145,7 +148,10 @@ class HomeProvider extends ChangeNotifier {
           if (searchController.text.isNotEmpty) 'search': searchController.text,
           if (selectedCategory != null && selectedCategory != 0)
             'category_id': selectedCategory,
-          if (selectedVendor != null) 'property_id': selectedVendor
+          if (selectedVendor != null) 'property_id': selectedVendor,
+          if (_selectedSorting.isNotEmpty || _selectedSorting != '')
+            'sort_by': _selectedSorting,
+          if (_selectedBrandIds.isNotEmpty) "brand_id": _selectedBrandIds,
         },
         requiresAuth: true,
       );
@@ -200,7 +206,7 @@ class HomeProvider extends ChangeNotifier {
   };
   // Product filters
   final Map<String, bool> _productTypeFilters = {
-    'خزانة': false,
+    'كرتونة': false,
     'علبة': false,
     'قطعة': false,
   };
@@ -231,8 +237,16 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateBrandFilter(String brand, bool value) {
-    _brandFilters[brand] = value;
+  final Set<String> _selectedBrandIds = {};
+
+  Set<String> get selectedBrandIds => _selectedBrandIds;
+
+  void updateBrandFilter(String brandId, bool isSelected) {
+    if (isSelected) {
+      _selectedBrandIds.add(brandId);
+    } else {
+      _selectedBrandIds.remove(brandId);
+    }
     notifyListeners();
   }
 
@@ -254,7 +268,7 @@ class HomeProvider extends ChangeNotifier {
   // Reset all filters
   void resetFilters() {
     _isInstallmentEnabled = false;
-    _selectedSorting = 'الأكثر مبيعا';
+    _selectedSorting = '';
 
     for (var key in _brandFilters.keys) {
       _brandFilters[key] = false;
@@ -270,8 +284,33 @@ class HomeProvider extends ChangeNotifier {
 
   // Apply filters
   void applyFilters() {
-    // This would typically make an API call or update a parent state
-    // For this example, we'll just notify listeners
+    getAllHomeProducts(refresh: true);
     notifyListeners();
+  }
+
+  List<BrandModel> listOfBrands = [];
+  bool isLoadingBrands = false;
+  Future<void> getAllBrands() async {
+    try {
+      listOfBrands.clear();
+      isLoadingBrands = true;
+      notifyListeners();
+      final response =
+          await DioHelper.get(EndPoints.getAllBrands, requiresAuth: true);
+      if (response['success'] == true) {
+        isLoadingBrands = false;
+        notifyListeners();
+        GetAllBrandsModel data = GetAllBrandsModel.fromJson(response);
+        listOfBrands.addAll(data.data ?? []);
+        notifyListeners();
+      } else {
+        isLoadingBrands = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      isLoadingBrands = false;
+      notifyListeners();
+      log(e.toString());
+    }
   }
 }
