@@ -471,6 +471,36 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
     }
   }
 
+  //delete account///
+
+  Future<void> deleteAccount() async {
+    try {
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+      notifyListeners();
+      final response = await DioHelper.post(EndPoints.deleteAccount,
+          data: {}, requiresAuth: true);
+      if (response['success'] == true) {
+        EasyLoading.dismiss();
+        notifyListeners();
+        sharedPref.clear();
+        showCustomedToast(response['message'], ToastType.success);
+        NavigationManager.navigatToAndFinish(LoginScreen());
+      } else {
+        EasyLoading.dismiss();
+        notifyListeners();
+        NavigationManager.navigatToAndFinish(LoginScreen());
+        sharedPref.clear();
+        showCustomedToast(response['message'], ToastType.error);
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      notifyListeners();
+      log(e.toString());
+    }
+  }
+
   @override
   void reassemble() {}
 }

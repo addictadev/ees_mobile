@@ -37,14 +37,16 @@ class CartProvider with ChangeNotifier {
         NavigationManager.navigatToAndFinish(MainScreen(currentIndex: 1));
         showCustomedToast(response['message'], ToastType.success);
       } else {
-        showCustomedToast(response?['message'] ?? 'حدث خطأ', ToastType.error);
+        if (response['message'].toString().contains('الحالية')) {
+        } else {
+          showCustomedToast(response?['message'] ?? 'حدث خطأ', ToastType.error);
+        }
       }
 
       return response; // التأكد من إرجاع الاستجابة
     } catch (e) {
       EasyLoading.dismiss();
       notifyListeners();
-      print('Error: $e');
       return e.toString(); // التأكد من إرجاع null في حالة الخطأ
     }
   }
@@ -73,6 +75,7 @@ class CartProvider with ChangeNotifier {
       } else {
         EasyLoading.dismiss();
         notifyListeners();
+
         showCustomedToast(response['message'], ToastType.error);
       }
     } catch (e) {
@@ -172,7 +175,7 @@ class CartProvider with ChangeNotifier {
       // );
       notifyListeners();
       final response = await DioHelper.post(EndPoints.deleteCartItem,
-          data: {"cart_id": cartId}, requiresAuth: true);
+          data: {"product_id": cartId}, requiresAuth: true);
       if (response['success'] == true) {
         EasyLoading.dismiss();
         notifyListeners();

@@ -48,8 +48,10 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(" ${widget.cartItem.product!.package ?? ""}"),
-                        Text("${widget.cartItem.variant!.price} ج.م",
+                        Text(
+                            "${widget.cartItem.quantity}  ${widget.cartItem.product!.package ?? ""}"),
+                        Text(
+                            '${(double.parse(widget.cartItem.variant!.price!.toString()) * double.parse(widget.cartItem.quantity.toString()))} ر.س',
                             style: TextStyle(color: Colors.blue)),
                       ],
                     ),
@@ -84,7 +86,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                         }
                       }),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
                     child: CustomText(
                         text: widget.cartItem.quantity.toString(),
                         color: AppColors.primary,
@@ -94,8 +96,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                       child: Container(
                           padding: EdgeInsets.all(1.w),
                           decoration: getBoxDecoration(
-                              radus: 1.w,
-                              fillColor: AppColors.primary.withOpacity(.6)),
+                              radus: 1.w, fillColor: AppColors.primary),
                           child: Icon(
                             Icons.remove,
                             color: AppColors.white,
@@ -132,7 +133,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                 titleColor: AppColors.red,
                 hasBorder: true,
                 onTap: () => Provider.of<CartProvider>(context, listen: false)
-                    .deleteCartItem(widget.cartItem.id),
+                    .deleteCartItem(widget.cartItem.product!.id.toString()),
               )
             ],
           ),

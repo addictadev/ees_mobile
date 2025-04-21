@@ -57,7 +57,7 @@ class Contactusscreen extends StatelessWidget {
                     4.height,
                     AppButton('ارسال', onTap: () {
                       if (value.formKey.currentState!.validate()) {
-                        // value.contactUs(context);
+                        value.contactUs();
                       }
                     })
                   ],

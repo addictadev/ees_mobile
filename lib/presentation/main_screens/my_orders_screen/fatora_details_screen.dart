@@ -59,29 +59,61 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                       ],
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey.shade300),
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: CustomCachedImage(
+                            imageUrl: widget.orderDetails.property?.logo ?? "",
+                            width: 20.w,
+                            height: 16.w,
+                          ),
+                        ),
+                        SizedBox(width: 3.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('حالة الطلب',
+                                      style: TextStyle(fontSize: AppFonts.t2)),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 4.w, vertical: 5),
+                                    decoration: BoxDecoration(
+                                      color: _getStatusColor(
+                                              widget.orderDetails.status)
+                                          .withOpacity(.15),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Text(
+                                      widget.orderDetails.status ?? 'معلق',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: _getStatusColor(
+                                            widget.orderDetails.status),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              child: CustomCachedImage(
-                                  imageUrl:
-                                      widget.orderDetails.property?.logo ?? ""),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              widget.orderDetails.property?.name ?? "",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                              1.height,
+                              Text(
+                                widget.orderDetails.property?.name ?? "",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -128,22 +160,6 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
 
                   2.height,
                   // Order Status
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('حالة الطلب',
-                          style: TextStyle(fontSize: AppFonts.t2)),
-                      Text(
-                        widget.orderDetails.status ?? 'معلق',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: _getStatusColor(widget.orderDetails.status),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  1.height,
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -166,7 +182,46 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                     ],
                   ),
 
+                  if (widget.orderDetails.coupon_code != null)
+                    Column(
+                      children: [
+                        1.height,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('الاجمالي قبل الخصم ',
+                                style: TextStyle(fontSize: AppFonts.t2)),
+                            Text(
+                              widget.orderDetails.totalBeforDiscount + ' ج.م',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color:
+                                    _getStatusColor(widget.orderDetails.status),
+                              ),
+                            ),
+                          ],
+                        ),
+                        1.height,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('الخصم',
+                                style: TextStyle(fontSize: AppFonts.t2)),
+                            Text(
+                              widget.orderDetails.discount + ' ج.م',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color:
+                                    _getStatusColor(widget.orderDetails.status),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
                   1.height,
+
                   Divider(),
 
                   1.height,
@@ -181,7 +236,7 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                         ),
                       ),
                       Text(
-                        '${double.tryParse(widget.orderDetails.totalPrice!)!.toStringAsFixed(1)} ج.م',
+                        '${double.tryParse(widget.orderDetails.totalPrice!)!.toStringAsFixed(2)} ج.م',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -191,9 +246,34 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                     ],
                   ),
 
+                  if (widget.orderDetails.status == 'تم الاستلام')
+                    Container(
+                      padding: EdgeInsets.all(3.w),
+                      margin: EdgeInsets.only(top: 3.w),
+                      decoration: getBoxDecoration(
+                          fillColor: AppColors.lightOrange.withOpacity(.1),
+                          withShadwos: false),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.location_city_outlined,
+                            color: AppColors.lightOrange,
+                          ),
+                          2.width,
+                          Expanded(
+                            child: CustomText(
+                                text:
+                                    'اقرب فرع لاستلام  الطلبيه : ${widget.orderDetails.property?.address}',
+                                color: AppColors.lightOrange,
+                                textAlign: TextAlign.start,
+                                fontweight: FontWeight.w700),
+                          ),
+                        ],
+                      ),
+                    ),
                   // Button
-
-                  widget.orderDetails.status == 'تم التعديل'
+                  widget.orderDetails.items!
+                          .any((item) => item.status == 'تم التعديل')
                       ? Container(
                           decoration: getBoxDecoration(
                               fillColor: AppColors.bluebgColor),
@@ -221,25 +301,26 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                             ...widget.orderDetails.items!.map((item) {
                               return Column(
                                 children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Icon(
-                                        Iconsax.card_edit,
-                                        color: AppColors.lightOrange,
-                                      ),
-                                      1.width,
-                                      Expanded(
-                                        child: CustomText(
-                                            text:
-                                                'تم تحديث الطلبية من قبل المورد الكميه المتاحه من ${item.productName} هي ${item.seller_quantity} بدلا من ${item.quantity}',
-                                            fontSize: 14.sp,
-                                            textAlign: TextAlign.start),
-                                      ),
-                                    ],
-                                  ),
-                                  1.height,
+                                  if (item.status == 'تم التعديل')
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          Iconsax.card_edit,
+                                          color: AppColors.lightOrange,
+                                        ),
+                                        1.width,
+                                        Expanded(
+                                          child: CustomText(
+                                              text:
+                                                  'تم تحديث الطلبية من قبل المورد الكميه المتاحه من ${item.productName} هي ${item.seller_quantity} ${item.package} بدلا من ${item.quantity} ${item.package}',
+                                              fontSize: 14.sp,
+                                              textAlign: TextAlign.start),
+                                        ),
+                                      ],
+                                    ),
+                                  if (item.status == 'تم التعديل') 1.height,
                                   if (item.status == 'تم التعديل')
                                     Row(
                                         mainAxisAlignment:
@@ -255,7 +336,7 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                                                         context,
                                                         listen: false)
                                                     .acceptEdit(
-                                                        orderId: item.variantId,
+                                                        orderId: item.id,
                                                         quantity: item
                                                             .seller_quantity),
                                           ),
@@ -269,21 +350,22 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                                               Provider.of<OrdersController>(
                                                       context,
                                                       listen: false)
-                                                  .cancelOrderItem(
-                                                      item.variantId);
+                                                  .cancelOrderItem(item.id);
                                             },
                                           )
                                         ]),
                                   1.height,
                                   if (widget.orderDetails.items!.last != item)
-                                    Divider(
-                                        color: Colors.grey[300], thickness: 1),
+                                    if (item.status == 'تم التعديل')
+                                      Divider(
+                                          color: Colors.grey[300],
+                                          thickness: 1),
                                 ],
                               );
                             })
                           ]),
                         )
-                      : 2.height,
+                      : 0.height,
 
                   widget.orderDetails.status == 'تم الاستلام'
                       ? Column(
@@ -334,6 +416,7 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                                   borderColor: AppColors.red,
                                   titleColor: AppColors.red,
                                 ),
+                                4.height
                               ],
                             )
                           : SizedBox()
@@ -349,6 +432,8 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
   Color _getStatusColor(String? status) {
     switch (status?.toLowerCase()) {
       case 'completed':
+      case 'جاري التجهيز':
+        return AppColors.lightOrange;
       case 'تم التسليم':
         return Colors.green;
       case 'pending':
@@ -383,14 +468,17 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
         textDirection: TextDirection.rtl,
         children: [
           Container(
-            width: 60,
-            height: 60,
+            width: 20.w,
+            height: 16.w,
             decoration: BoxDecoration(
               color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(8),
             ),
             child: item.image != null && item.image!.isNotEmpty
-                ? CustomCachedImage(imageUrl: item.image!)
+                ? CustomCachedImage(
+                    imageUrl: item.image!,
+                    fit: BoxFit.contain,
+                  )
                 : const Icon(Icons.lightbulb_outline, color: Colors.grey),
           ),
           const SizedBox(width: 12),
@@ -451,7 +539,7 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                       ),
                     ),
                     Text(
-                      'عدد: ${item.quantity ?? 0}',
+                      'عدد: ${item.quantity ?? 0} ${item.package ?? ""}',
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,

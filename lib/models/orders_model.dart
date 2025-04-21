@@ -31,6 +31,9 @@ class OrderItemDetails {
   int? id;
   String? status;
   String? note;
+  dynamic discount;
+  dynamic coupon_code;
+  dynamic totalBeforDiscount;
   String? orderedAt;
   String? totalPrice;
   Property? property;
@@ -40,6 +43,9 @@ class OrderItemDetails {
       {this.id,
       this.status,
       this.note,
+      this.discount,
+      this.coupon_code,
+      this.totalBeforDiscount,
       this.orderedAt,
       this.totalPrice,
       this.property,
@@ -49,6 +55,9 @@ class OrderItemDetails {
     id = json['id'];
     status = json['status'];
     note = json['note'];
+    coupon_code = json['coupon_code'];
+    discount = json['discount'];
+    totalBeforDiscount = json['total_before_discount'];
     orderedAt = json['ordered_at'];
     totalPrice = json['total_price'];
     property =
@@ -66,6 +75,9 @@ class OrderItemDetails {
     data['id'] = id;
     data['status'] = status;
     data['note'] = note;
+    data['coupon_code'] = coupon_code;
+    data['discount'] = discount;
+    data['total_before_discount'] = totalBeforDiscount;
     data['ordered_at'] = orderedAt;
     data['total_price'] = totalPrice;
     if (property != null) {
@@ -106,7 +118,9 @@ class Property {
 class Items {
   String? productName;
   int? variantId;
+  int? id;
   int? quantity;
+  dynamic package;
   dynamic seller_note;
   dynamic seller_quantity;
   String? price;
@@ -116,6 +130,9 @@ class Items {
   Items(
       {this.productName,
       this.variantId,
+      this.id,
+      this.package,
+      this.seller_note,
       this.quantity,
       this.price,
       this.image,
@@ -124,7 +141,10 @@ class Items {
   Items.fromJson(Map<String, dynamic> json) {
     productName = json['product_name'];
     variantId = json['variant_id'];
+
+    id = json['id'];
     quantity = json['quantity'];
+    package = json['package'];
     seller_note = json['seller_note'];
     seller_quantity = json['seller_quantity'];
     price = json['price'];
@@ -136,7 +156,10 @@ class Items {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['product_name'] = productName;
     data['variant_id'] = variantId;
+
+    data['id'] = id;
     data['quantity'] = quantity;
+    data['package'] = package;
     data['seller_note'] = seller_note;
     data['seller_quantity'] = seller_quantity;
     data['price'] = price;

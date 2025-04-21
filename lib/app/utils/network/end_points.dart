@@ -24,7 +24,7 @@ class EndPoints {
   static const String getCart = "cart/get-cart";
   static const String incrementCartItem = "cart/increment-cart-quantity";
   static const String decrementCartItem = "cart/decrement-cart-quantity";
-  static const String deleteCartItem = "cart/clear-cart";
+  static const String deleteCartItem = "cart/remove-item";
   static const String createOrder = "order/store-order";
   static const String applyCoupon = "coupon/apply-coupon";
   static const String getOrders = "order/details";
@@ -36,4 +36,6 @@ class EndPoints {
   static const String changePassword = 'profile/update-password';
   static const String logout = 'auth/logout';
   static const String getAllBrands = "brands/get-all";
+  static const String contactUs = "contact/store-contact";
+  static const String deleteAccount = "profile/deactivate-account";
 }

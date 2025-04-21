@@ -31,8 +31,9 @@ class _CartScreenState extends State<CartScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      if (IsLogin())
+      if (IsLogin()) {
         Provider.of<CartProvider>(context, listen: false).getCartItems();
+      }
     });
   }
 
@@ -206,17 +207,29 @@ class _CartScreenState extends State<CartScreen> {
           ),
         1.height,
         if (cartProvider.cartModel?.data!.discount == 0)
-          _buildInfoRow(totalPrice <= cartMin, "إجمالي الطلب",
-              "${cartProvider.cartModel?.data!.totalPrice!} ج.م", true),
+          _buildInfoRow(
+              totalPrice <= cartMin,
+              "إجمالي الطلب",
+              "${cartProvider.cartModel?.data!.totalPrice!.toStringAsFixed(2)} ج.م",
+              true),
         if (cartProvider.cartModel?.data!.discount != 0)
-          _buildInfoRow(totalPrice <= cartMin, "إجمالي قبل الخصم",
-              "${cartProvider.cartModel?.data!.totalPrice!} ج.م", true),
+          _buildInfoRow(
+              totalPrice <= cartMin,
+              "إجمالي قبل الخصم",
+              "${cartProvider.cartModel?.data!.totalPrice!.toStringAsFixed(2)} ج.م",
+              true),
         if (cartProvider.cartModel?.data!.discount != 0)
-          _buildInfoRow(false, "الخصم",
-              "- ${cartProvider.cartModel?.data!.discount} ج.م", true),
+          _buildInfoRow(
+              false,
+              "الخصم",
+              "${cartProvider.cartModel?.data!.discount.toStringAsFixed(2)} ج.م",
+              true),
         if (cartProvider.cartModel?.data!.discount != 0)
-          _buildInfoRow(false, "الاجمالي بعد الخصم",
-              "${cartProvider.cartModel?.data!.totalAfterDiscount} ج.م", true),
+          _buildInfoRow(
+              false,
+              "الاجمالي بعد الخصم",
+              "${cartProvider.cartModel?.data!.totalAfterDiscount.toStringAsFixed(2)} ج.م",
+              true),
         _buildInfoRow(totalPrice <= cartMin, "عدد المنتجات",
             "${cartProvider.cartModel?.data!.items!.length} منتجات", true),
       ],
@@ -294,7 +307,7 @@ class _CartScreenState extends State<CartScreen> {
                     style:
                         TextStyle(color: Colors.white, fontSize: AppFonts.t4)),
                 Text(
-                    "${cartProvider.cartModel?.data!.totalAfterDiscount ?? cartProvider.cartModel?.data!.totalPrice} ج.م",
+                    "${cartProvider.cartModel?.data!.totalAfterDiscount.toStringAsFixed(2) ?? cartProvider.cartModel?.data!.totalPrice!.toStringAsFixed(2)} ج.م",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,

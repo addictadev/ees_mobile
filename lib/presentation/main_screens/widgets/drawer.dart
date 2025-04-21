@@ -13,6 +13,7 @@ import 'package:sizer/sizer.dart';
 import '../../../app/dependency_injection/get_it_injection.dart';
 import '../../../app/utils/consts.dart';
 import '../../../app/utils/local/shared_pref_serv.dart';
+import '../../../app/widgets/app_text.dart';
 import '../../notification_screen/notification_screen.dart';
 import '../../static_screens/termsAndCondition/termsAndConditions.dart';
 import 'drawer_item.dart';
@@ -84,6 +85,10 @@ class CustomDrawer extends StatelessWidget {
               title: "حذف الحساب",
               color: Colors.red.withOpacity(.2),
               textColor: Colors.red,
+              onTap: () => showDeleteAccountDialog(context, () {
+                Provider.of<AuthController>(context, listen: false)
+                    .deleteAccount();
+              }),
             ),
           DrawerItem(
             icon: Icons.logout,
@@ -109,4 +114,74 @@ class CustomDrawer extends StatelessWidget {
 bool IsLogin() {
   final sharedPref = getIt<SharedPreferencesService>();
   return sharedPref.getBool(ConstsClass.isAuthorized);
+}
+
+void showDeleteAccountDialog(BuildContext context, VoidCallback onConfirm) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        contentPadding: const EdgeInsets.all(16),
+        content: SizedBox(
+          width: 300,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: InkWell(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 1.w, right: 2.w),
+                    child: Icon(
+                      Icons.close,
+                      size: 6.w,
+                    ),
+                  ),
+                  onTap: () => Navigator.pop(context),
+                ),
+              ),
+              Icon(Iconsax.warning_2, color: AppColors.red, size: 15.w),
+              SizedBox(height: 1.5.h),
+              const Text(
+                'هل أنت متأكد من حذف الحساب؟',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'بمجرد تأكيد الحذف، لن تتمكن من استعادة حسابك أو بياناتك.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: CustomText(text: 'إلغاء'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        onConfirm();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.red,
+                      ),
+                      child: CustomText(text: 'حذف', color: Colors.white),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
