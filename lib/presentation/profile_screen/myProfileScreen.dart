@@ -75,6 +75,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           imageUrl:
                               sharedPref.getString(ConstsClass.shopLogoKey),
                           fit: BoxFit.cover,
+                          // width: 20.w,
+                          // height: 20.w,
                         ),
                       ),
                     ),

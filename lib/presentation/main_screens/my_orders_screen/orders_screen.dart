@@ -55,6 +55,8 @@ class _OrdersScreenState extends State<OrdersScreen>
       }
 
       if (IsLogin()) {
+        Provider.of<OrdersController>(context, listen: false).ordersModel =
+            null;
         Provider.of<OrdersController>(context, listen: false)
             .getAllOrders(status);
       }

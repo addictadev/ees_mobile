@@ -11,8 +11,22 @@ import 'package:sizer/sizer.dart';
 
 import '../../../controllers/static_controller.dart';
 
-class Contactusscreen extends StatelessWidget {
+class Contactusscreen extends StatefulWidget {
   const Contactusscreen({super.key});
+
+  @override
+  State<Contactusscreen> createState() => _ContactusscreenState();
+}
+
+class _ContactusscreenState extends State<Contactusscreen> {
+  @override
+  void initState() {
+    final provider = Provider.of<StaticProvider>(context, listen: false);
+    provider.nameController.clear();
+    provider.phoneController.clear();
+    provider.messageController.clear();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +58,7 @@ class Contactusscreen extends StatelessWidget {
                     AppTextField(
                       hintText: 'ادخل رقم الجوال',
                       controller: value.phoneController,
+                      textInputType: TextInputType.phone,
                       validator: (val) => Validator.phoneValidator(val),
                     ),
                     2.height,

@@ -236,6 +236,7 @@ class DioHelper {
         //   message = _extractErrorMessage(response.data) ?? 'Bad Request';
         //   break;
         case 401:
+          message = 'Unauthorized request';
           getIt<SharedPreferencesService>().clear();
           NavigationManager.navigatToAndFinish(const LoginScreen());
         // case 403:

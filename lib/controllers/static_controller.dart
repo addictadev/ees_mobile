@@ -12,7 +12,6 @@ import '../app/utils/show_toast.dart';
 
 class StaticProvider extends ChangeNotifier {
   TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController messageController = TextEditingController();
 
@@ -66,7 +65,6 @@ class StaticProvider extends ChangeNotifier {
         EasyLoading.dismiss();
 
         nameController.clear();
-        emailController.clear();
         phoneController.clear();
         messageController.clear();
         notifyListeners();

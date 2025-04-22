@@ -63,14 +63,15 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                       children: [
                         Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.grey.shade300),
-                          ),
-                          child: CustomCachedImage(
-                            imageUrl: widget.orderDetails.property?.logo ?? "",
-                            width: 20.w,
-                            height: 16.w,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(2.w),
+                            child: CustomCachedImage(
+                              imageUrl:
+                                  widget.orderDetails.property?.logo ?? "",
+                              width: 20.w,
+                              height: 16.w,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         SizedBox(width: 3.w),
@@ -368,7 +369,6 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                       : 0.height,
 
                   widget.orderDetails.status == 'تم الاستلام' &&
-                              widget.orderDetails.is_rated == null ||
                           widget.orderDetails.is_rated == '0'
                       ? Column(
                           children: [
@@ -406,7 +406,7 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                               children: [
                                 AppButton(
                                   'الغاء الطلب',
-                                  margin: EdgeInsets.only(top: 1.h),
+                                  margin: EdgeInsets.only(top: 2.5.h),
                                   onTap: () =>
                                       showCancelOrderDialog(context, () {
                                     Provider.of<OrdersController>(context,
@@ -476,12 +476,12 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
             height: 16.w,
             decoration: BoxDecoration(
               color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(2.w),
             ),
             child: item.image != null && item.image!.isNotEmpty
                 ? CustomCachedImage(
                     imageUrl: item.image!,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.cover,
                   )
                 : const Icon(Icons.lightbulb_outline, color: Colors.grey),
           ),

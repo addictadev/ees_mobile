@@ -60,6 +60,7 @@ class _ForgetPassScreenState extends State<ForgetPassScreen> {
                             AppTextField(
                               hintText: 'ادخل رقم الموبايل',
                               validator: (p0) => Validator.phoneValidator(p0),
+                              textInputType: TextInputType.phone,
                               controller: value.phoneReisterController,
                               prefixIcon: Padding(
                                 padding: const EdgeInsets.all(12.0),

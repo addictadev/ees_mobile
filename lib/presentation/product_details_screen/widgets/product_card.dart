@@ -81,7 +81,7 @@ class ProductHeader extends StatelessWidget {
               Text(
                 product.name ?? '',
                 style: GoogleFonts.cairo(
-                  fontSize: 16.sp,
+                  fontSize: 17.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -90,7 +90,9 @@ class ProductHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    product.package ?? '',
+                    product.variants!.first.minQuantity.toString() +
+                        ' ' +
+                        product.package.toString(),
                     style: GoogleFonts.cairo(
                       fontSize: 15.sp,
                       color: Colors.grey[600],
@@ -246,7 +248,7 @@ class CompanyInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(4.w),
+      padding: EdgeInsets.symmetric(vertical: 2.w, horizontal: 4.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(3.w),
@@ -257,17 +259,29 @@ class CompanyInfo extends StatelessWidget {
           CustomText(
               text: 'وصف المنتج',
               color: AppColors.primary,
-              fontSize: 16.sp,
+              fontSize: 17.sp,
               fontweight: FontWeight.w600),
           1.height,
           CustomText(
               text: product.description ?? '',
               fontSize: 15.sp,
               textAlign: TextAlign.start),
-          SizedBox(height: 2.h),
-          if (product.properties != null) _CompanyHeader(product),
-          if (product.properties != null) _CompanyDetails(product),
-          SizedBox(height: 2.h),
+          SizedBox(height: 1.h),
+          if (product.properties != null)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Divider(),
+                CustomText(
+                    text: 'بيانات المتجر',
+                    color: AppColors.primary,
+                    fontSize: 17.sp,
+                    fontweight: FontWeight.w600),
+                1.height,
+                _CompanyHeader(product),
+                _CompanyDetails(product),
+              ],
+            ),
           Divider()
         ],
       ),
@@ -284,7 +298,7 @@ Widget _CompanyHeader(ProductData? product) {
           imageUrl: product?.properties![0].logo ?? '',
           width: 20.w,
           height: 20.w,
-          fit: BoxFit.contain,
+          fit: BoxFit.cover,
         ),
       ),
       SizedBox(width: 3.w),

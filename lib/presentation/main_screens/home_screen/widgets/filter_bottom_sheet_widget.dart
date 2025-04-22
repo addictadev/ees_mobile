@@ -54,7 +54,7 @@ class _ProductFilterBottomSheetContentState
                 children: [
                   Container(
                     margin: EdgeInsets.only(top: 3.w),
-                    width: 35.w,
+                    width: 30.w,
                     height: 4,
                     decoration: BoxDecoration(
                       color: Colors.grey[300],
@@ -65,7 +65,7 @@ class _ProductFilterBottomSheetContentState
                   Expanded(
                     child: CupertinoScrollbar(
                       child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 4.5.w),
+                        padding: EdgeInsets.symmetric(horizontal: 5.w),
                         children: [
                           Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,9 +78,9 @@ class _ProductFilterBottomSheetContentState
                                     : _BrandFilterSection(),
                                 _ProductTypeFilterSection(),
                               ]),
-                          Divider(height: 32),
+                          Divider(height: 24),
                           _NewestOffers(),
-                          Divider(height: 32),
+                          Divider(height: 24),
                           _SortingSection(),
                           _BottomButtons(),
                         ],
@@ -95,7 +95,7 @@ class _ProductFilterBottomSheetContentState
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(color: Colors.grey[200]!),
@@ -286,8 +286,8 @@ class _SortingSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 12),
+        Padding(
+          padding: EdgeInsets.only(bottom: 3.w, top: 1.w),
           child: Text(
             'ترتيب حسب',
             style: TextStyle(
@@ -298,7 +298,7 @@ class _SortingSection extends StatelessWidget {
         ),
         ...provider.sortOptions.map((option) {
           return SizedBox(
-            height: 70,
+            height: 65,
             child: Column(
               children: [
                 Row(
@@ -335,7 +335,7 @@ class _BottomButtons extends StatelessWidget {
     final provider = Provider.of<HomeProvider>(context);
 
     return Container(
-      padding: EdgeInsets.all(2.w),
+      padding: EdgeInsets.only(left: 2.w, right: 2.w, top: 1.5.h),
       decoration: BoxDecoration(),
       child: Row(
         children: [

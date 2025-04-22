@@ -226,7 +226,9 @@ class AuthController with ChangeNotifier implements ReassembleHandler {
       if (response['success'] == true) {
         EasyLoading.dismiss();
         notifyListeners();
-        // showCustomedToast(response['message'], ToastType.success);
+        passwordController.clear();
+        phoneReisterController.clear();
+        showCustomedToast(response['message'], ToastType.success);
         sharedPref.setSecureString(
             ConstsClass.jwtTOKEN, response['data']['token']);
         sharedPref.setString(

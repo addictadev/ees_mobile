@@ -145,6 +145,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               hintText: 'ادخل رقم الموبايل',
                               validator: (p0) => Validator.phoneValidator(p0),
                               controller: value.phoneReisterController,
+                              textInputType: TextInputType.phone,
                               prefixIcon: Padding(
                                 padding: const EdgeInsets.all(12.0),
                                 child: CustomSvgImage(

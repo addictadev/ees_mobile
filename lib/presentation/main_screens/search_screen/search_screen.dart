@@ -158,8 +158,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Column(
                             children: [
                               Center(child: const ProductGrid()),
-                              if (value.isLoadingProducts &&
-                                  value.productsModel != null)
+                              if (value.isLoadingProducts)
                                 Padding(
                                   padding: EdgeInsets.symmetric(vertical: 2.h),
                                   child: Center(
