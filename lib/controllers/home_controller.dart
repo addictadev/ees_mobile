@@ -302,11 +302,13 @@ class HomeProvider extends ChangeNotifier {
     for (var key in _productTypeFilters.keys) {
       _productTypeFilters[key] = false;
     }
-
+    productsModel = null;
     _showWidthFilterOption = false;
     _selectedBrandIds.clear();
     selectedProductTypes.clear();
-    getAllHomeProducts(refresh: true);
+    _selectedSortingText = '';
+    _selectedSorting = '';
+
     notifyListeners();
   }
 

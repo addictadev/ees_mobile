@@ -367,13 +367,17 @@ class _FatoraDetailsScreenState extends State<FatoraDetailsScreen> {
                         )
                       : 0.height,
 
-                  widget.orderDetails.status == 'تم الاستلام'
+                  widget.orderDetails.status == 'تم الاستلام' &&
+                              widget.orderDetails.is_rated == null ||
+                          widget.orderDetails.is_rated == '0'
                       ? Column(
                           children: [
                             AppButton(
                               'تقييم المورد',
                               margin: EdgeInsets.only(top: 5.h, bottom: 2.h),
-                              onTap: () => showRatingDialog(context),
+                              onTap: () => showRatingDialog(context,
+                                  orderId: widget.orderDetails.id,
+                                  vendorId: widget.orderDetails.property!.id),
                             ),
                             AppButton(
                                 'اطلب المزيد من شركة ${widget.orderDetails.property?.name}',

@@ -3,12 +3,14 @@ import 'package:ees/app/utils/app_fonts.dart';
 import 'package:ees/app/widgets/app_button.dart';
 import 'package:ees/app/widgets/app_text.dart';
 import 'package:ees/app/widgets/app_text_field.dart';
+import 'package:ees/controllers/orders_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
-void showRatingDialog(BuildContext context) {
+void showRatingDialog(BuildContext context, {orderId, vendorId}) {
   double rating = 4.0;
   TextEditingController commentController = TextEditingController();
 
@@ -83,8 +85,12 @@ void showRatingDialog(BuildContext context) {
                 AppButton(
                   'تأكيد التقييم',
                   onTap: () {
-                    Navigator.pop(context);
-                    showThanksDialog(context);
+                    context.read<OrdersController>().rateVendor(
+                          orderId: orderId,
+                          prepertyId: vendorId,
+                          comment: commentController.text,
+                          rating: rating,
+                        );
                   },
                 ),
               ],
@@ -130,7 +136,9 @@ void showThanksDialog(BuildContext context) {
         Center(
           child: TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إغلاق'),
+            child: CustomText(
+              text: 'إغلاق',
+            ),
           ),
         ),
       ],

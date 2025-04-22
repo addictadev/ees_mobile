@@ -9,6 +9,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../app/utils/network/dio_helper.dart';
 import '../app/utils/network/end_points.dart';
 import '../app/utils/show_toast.dart';
+import '../presentation/main_screens/my_orders_screen/widgets/ordersDialog.dart';
 
 class OrdersController with ChangeNotifier {
   bool isLoadingAllOrders = false;
@@ -117,6 +118,41 @@ class OrdersController with ChangeNotifier {
         NavigationManager.navigatToAndFinish(MainScreen(
           currentIndex: 2,
         ));
+      } else {
+        EasyLoading.dismiss();
+        notifyListeners();
+        showCustomedToast(response['message'], ToastType.error);
+      }
+    } catch (e) {
+      EasyLoading.dismiss();
+      log(e.toString());
+      notifyListeners();
+    }
+  }
+
+  ///rate Vendor ///
+  Future<void> rateVendor({var orderId, rating, prepertyId, comment}) async {
+    try {
+      EasyLoading.show(
+        maskType: EasyLoadingMaskType.black,
+      );
+      notifyListeners();
+      final response = await DioHelper.post(EndPoints.rateVendor,
+          data: {
+            "order_id": orderId,
+            'rate': rating,
+            'property_id': prepertyId,
+            'comment': comment
+          },
+          requiresAuth: true);
+      if (response['success'] == true) {
+        EasyLoading.dismiss();
+        notifyListeners();
+        NavigationManager.pop();
+        getAllOrders("finished");
+        showThanksDialog(NavigationManager.navigatorKey.currentContext!);
+
+        showCustomedToast(response['message'], ToastType.success);
       } else {
         EasyLoading.dismiss();
         notifyListeners();

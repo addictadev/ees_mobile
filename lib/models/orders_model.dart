@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 class OrdersModel {
   bool? status;
   String? message;
@@ -33,6 +35,7 @@ class OrderItemDetails {
   String? note;
   dynamic discount;
   dynamic coupon_code;
+  dynamic is_rated;
   dynamic totalBeforDiscount;
   String? orderedAt;
   String? totalPrice;
@@ -45,6 +48,7 @@ class OrderItemDetails {
       this.note,
       this.discount,
       this.coupon_code,
+      this.is_rated,
       this.totalBeforDiscount,
       this.orderedAt,
       this.totalPrice,
@@ -56,6 +60,7 @@ class OrderItemDetails {
     status = json['status'];
     note = json['note'];
     coupon_code = json['coupon_code'];
+    is_rated = json['is_rated'];
     discount = json['discount'];
     totalBeforDiscount = json['total_before_discount'];
     orderedAt = json['ordered_at'];
@@ -76,6 +81,7 @@ class OrderItemDetails {
     data['status'] = status;
     data['note'] = note;
     data['coupon_code'] = coupon_code;
+    data['is_rated'] = is_rated;
     data['discount'] = discount;
     data['total_before_discount'] = totalBeforDiscount;
     data['ordered_at'] = orderedAt;

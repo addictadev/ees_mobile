@@ -31,6 +31,10 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
+    final value = Provider.of<HomeProvider>(context, listen: false);
+    value.selectedCategory = 0;
+    value.selectedVendor = null;
+    value.productsModel = null;
     _scrollController.addListener(_onScroll);
     super.initState();
   }
@@ -48,7 +52,7 @@ class _SearchScreenState extends State<SearchScreen> {
       final provider = Provider.of<HomeProvider>(context, listen: false);
       if (provider.hasMorePages && !provider.isLoadingProducts) {
         log("Loading more products...");
-        provider.getAllHomeProducts();
+        provider.getAllHomeProducts(refresh: true);
       }
     }
   }

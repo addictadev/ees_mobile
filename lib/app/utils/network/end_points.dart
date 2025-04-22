@@ -38,4 +38,5 @@ class EndPoints {
   static const String getAllBrands = "brands/get-all";
   static const String contactUs = "contact/store-contact";
   static const String deleteAccount = "profile/deactivate-account";
+  static const String rateVendor = "rate/store-rate";
 }

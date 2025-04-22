@@ -67,6 +67,7 @@ class InvoiceTab extends StatelessWidget {
                                 AppAssets.switchIcon),
                           ],
                         ),
+                        1.height,
                         _buildTag(
                             "تاريخ الطلب : ${formatOrderDate(orderList?[index].orderedAt)}",
                             AppAssets.calenderIc),
@@ -180,10 +181,14 @@ class InvoiceTab extends StatelessWidget {
                           ],
                         ),
                         if (type == 'previous') SizedBox(width: 10),
-                        if (type == 'previous' && status == 'تم الاستلام')
+                        if (orderList?[index].status == 'تم الاستلام' &&
+                                orderList?[index].is_rated == null ||
+                            orderList?[index].is_rated == '0')
                           AppButton(
                             'تقييم المورد',
-                            onTap: () => showRatingDialog(context),
+                            onTap: () => showRatingDialog(context,
+                                orderId: orderList?[index].id,
+                                vendorId: orderList?[index].property?.id),
                             margin: EdgeInsets.symmetric(vertical: 3.w),
                           ),
                       ],
