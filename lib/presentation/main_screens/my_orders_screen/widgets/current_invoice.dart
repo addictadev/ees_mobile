@@ -45,164 +45,171 @@ class InvoiceTab extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     itemCount: orderList?.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 3.w),
-                        padding: EdgeInsets.all(3.w),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.shade200, blurRadius: 5),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                _buildTag(
-                                    "الرقم التعريفي : # ${orderList?[index].id}",
-                                    AppAssets.numIc),
-                                _buildTag(
-                                    "  حالة الطلب : ${orderList?[index].status}",
-                                    AppAssets.switchIcon),
-                              ],
-                            ),
-                            1.height,
-                            _buildTag(
-                                "تاريخ الطلب : ${formatOrderDate(orderList?[index].orderedAt)}",
-                                AppAssets.calenderIc),
-                            2.height,
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(2.w),
-                                  child: CustomCachedImage(
-                                      imageUrl:
-                                          orderList?[index].property?.logo ??
-                                              '',
-                                      fit: BoxFit.cover,
-                                      height: 20.w,
-                                      width: 20.w),
-                                ),
-                                2.width,
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                          orderList?[index].property?.name ??
-                                              '',
-                                          style: TextStyle(
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.bold)),
-                                      SizedBox(height: 5),
-                                      Text(
-                                          'عدد المنتجات: ${orderList?[index].items?.length}',
-                                          style: TextStyle(
-                                            fontSize: 15.sp,
-                                          )),
-                                      SizedBox(height: 5),
-                                      Text(
-                                          'إجمالي التكلفة: ${orderList?[index].totalPrice} ج.م',
-                                          style: TextStyle(
+                      return InkWell(
+                        onTap: () => NavigationManager.navigatTo(
+                            FatoraDetailsScreen(
+                                orderDetails: orderList![index])),
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 3.w),
+                          padding: EdgeInsets.all(3.w),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.grey.shade200, blurRadius: 5),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _buildTag(
+                                      "الرقم التعريفي : # ${orderList?[index].id}",
+                                      AppAssets.numIc),
+                                  _buildTag(
+                                      "  حالة الطلب : ${orderList?[index].status}",
+                                      AppAssets.switchIcon),
+                                ],
+                              ),
+                              1.height,
+                              _buildTag(
+                                  "تاريخ الطلب : ${formatOrderDate(orderList?[index].orderedAt)}",
+                                  AppAssets.calenderIc),
+                              2.height,
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(2.w),
+                                    child: CustomCachedImage(
+                                        imageUrl:
+                                            orderList?[index].property?.logo ??
+                                                '',
+                                        fit: BoxFit.cover,
+                                        height: 20.w,
+                                        width: 20.w),
+                                  ),
+                                  2.width,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                            orderList?[index].property?.name ??
+                                                '',
+                                            style: TextStyle(
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.bold)),
+                                        SizedBox(height: 5),
+                                        Text(
+                                            'عدد المنتجات: ${orderList?[index].items?.length}',
+                                            style: TextStyle(
                                               fontSize: 15.sp,
-                                              color: AppColors.primary)),
-                                      SizedBox(height: 10),
+                                            )),
+                                        SizedBox(height: 5),
+                                        Text(
+                                            'إجمالي التكلفة: ${orderList?[index].totalPrice} ج.م',
+                                            style: TextStyle(
+                                                fontSize: 15.sp,
+                                                color: AppColors.primary)),
+                                        SizedBox(height: 10),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Divider(),
+                              if (type == 'current') ...[
+                                Text('حالة الطلب : ${orderList?[index].status}',
+                                    style: TextStyle(
+                                        fontSize: 15.sp,
+                                        color: AppColors.lightOrange,
+                                        fontWeight: FontWeight.w600)),
+                                SizedBox(height: 5),
+                                Text('وسيتم الرد خلال أيام عمل',
+                                    style: TextStyle(fontSize: 14.sp)),
+                              ],
+                              if (type == 'confirmed')
+                                Container(
+                                  padding: EdgeInsets.all(3.w),
+                                  margin: EdgeInsets.only(top: 3.w),
+                                  decoration: getBoxDecoration(
+                                      fillColor:
+                                          AppColors.lightOrange.withOpacity(.1),
+                                      withShadwos: false),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.location_city_outlined,
+                                        color: AppColors.lightOrange,
+                                      ),
+                                      2.width,
+                                      Expanded(
+                                        child: CustomText(
+                                            text:
+                                                'اقرب فرع لاستلام  الطلبيه : ${orderList?[index].property?.address}',
+                                            color: AppColors.lightOrange,
+                                            textAlign: TextAlign.start,
+                                            fontweight: FontWeight.w700),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                            Divider(),
-                            if (type == 'current') ...[
-                              Text('حالة الطلب : ${orderList?[index].status}',
-                                  style: TextStyle(
-                                      fontSize: 15.sp,
-                                      color: AppColors.lightOrange,
-                                      fontWeight: FontWeight.w600)),
-                              SizedBox(height: 5),
-                              Text('وسيتم الرد خلال أيام عمل',
-                                  style: TextStyle(fontSize: 14.sp)),
-                            ],
-                            if (type == 'confirmed')
-                              Container(
-                                padding: EdgeInsets.all(3.w),
-                                margin: EdgeInsets.only(top: 3.w),
-                                decoration: getBoxDecoration(
-                                    fillColor:
-                                        AppColors.lightOrange.withOpacity(.1),
-                                    withShadwos: false),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.location_city_outlined,
-                                      color: AppColors.lightOrange,
-                                    ),
-                                    2.width,
+                              2.height,
+                              Row(
+                                children: [
+                                  if (type == 'current')
                                     Expanded(
-                                      child: CustomText(
-                                          text:
-                                              'اقرب فرع لاستلام  الطلبيه : ${orderList?[index].property?.address}',
-                                          color: AppColors.lightOrange,
-                                          textAlign: TextAlign.start,
-                                          fontweight: FontWeight.w700),
+                                      child: AppButton(
+                                        'الغاء الطلب',
+                                        onTap: () =>
+                                            showCancelOrderDialog(context, () {
+                                          Provider.of<OrdersController>(context,
+                                                  listen: false)
+                                              .cancelOrder(
+                                                  orderList?[index].id ?? 0);
+                                        }),
+                                        bgColor: AppColors.white,
+                                        hasBorder: true,
+                                        borderColor: AppColors.red,
+                                        titleColor: AppColors.red,
+                                      ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            2.height,
-                            Row(
-                              children: [
-                                if (type == 'current')
+                                  if (type == 'current') SizedBox(width: 10),
                                   Expanded(
                                     child: AppButton(
-                                      'الغاء الطلب',
-                                      onTap: () =>
-                                          showCancelOrderDialog(context, () {
-                                        Provider.of<OrdersController>(context,
-                                                listen: false)
-                                            .cancelOrder(
-                                                orderList?[index].id ?? 0);
-                                      }),
+                                      'تفاصيل الفاتورة',
+                                      onTap: () {
+                                        NavigationManager.navigatTo(
+                                            FatoraDetailsScreen(
+                                                orderDetails:
+                                                    orderList![index]));
+                                      },
                                       bgColor: AppColors.white,
                                       hasBorder: true,
-                                      borderColor: AppColors.red,
-                                      titleColor: AppColors.red,
+                                      borderColor: AppColors.primary,
+                                      titleColor: AppColors.primary,
                                     ),
                                   ),
-                                if (type == 'current') SizedBox(width: 10),
-                                Expanded(
-                                  child: AppButton(
-                                    'تفاصيل الفاتورة',
-                                    onTap: () {
-                                      NavigationManager.navigatTo(
-                                          FatoraDetailsScreen(
-                                              orderDetails: orderList![index]));
-                                    },
-                                    bgColor: AppColors.white,
-                                    hasBorder: true,
-                                    borderColor: AppColors.primary,
-                                    titleColor: AppColors.primary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            if (type == 'previous') SizedBox(width: 10),
-                            if (orderList?[index].status == 'تم الاستلام' &&
-                                orderList?[index].is_rated == '0')
-                              AppButton(
-                                'تقييم المورد',
-                                onTap: () => showRatingDialog(context,
-                                    orderId: orderList?[index].id,
-                                    vendorId: orderList?[index].property?.id),
-                                margin: EdgeInsets.symmetric(vertical: 3.w),
+                                ],
                               ),
-                          ],
+                              if (type == 'previous') SizedBox(width: 10),
+                              if (orderList?[index].status == 'تم الاستلام' &&
+                                  orderList?[index].is_rated == '0')
+                                AppButton(
+                                  'تقييم المورد',
+                                  onTap: () => showRatingDialog(context,
+                                      orderId: orderList?[index].id,
+                                      vendorId: orderList?[index].property?.id),
+                                  margin: EdgeInsets.symmetric(vertical: 3.w),
+                                ),
+                            ],
+                          ),
                         ),
                       );
                     })

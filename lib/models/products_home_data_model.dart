@@ -42,7 +42,9 @@ class ProductData {
   String? package;
   int? status;
   String? image;
+
   List<Categories>? categories;
+  Categories? brand;
   List<Categories>? properties;
   List<Variants>? variants;
 
@@ -52,6 +54,7 @@ class ProductData {
       this.description,
       this.package,
       this.status,
+      this.brand,
       this.image,
       this.categories,
       this.properties,
@@ -62,6 +65,7 @@ class ProductData {
     name = json['name'];
     description = json['description'];
     package = json['package'];
+    brand = json['brand'] != null ? Categories.fromJson(json['brand']) : null;
     status = json['status'];
     image = json['image'];
     if (json['categories'] != null) {
@@ -92,6 +96,7 @@ class ProductData {
     data['package'] = package;
     data['status'] = status;
     data['image'] = image;
+    data['brand'] = brand!.toJson();
     if (categories != null) {
       data['categories'] = categories!.map((v) => v.toJson()).toList();
     }

@@ -1,5 +1,7 @@
 import 'package:ees/app/extensions/sized_box_extension.dart';
+import 'package:ees/app/images_preview/custom_asset_img.dart';
 import 'package:ees/app/images_preview/custom_cashed_network_image.dart';
+import 'package:ees/app/utils/app_assets.dart';
 import 'package:ees/app/utils/app_colors.dart';
 import 'package:ees/app/utils/show_toast.dart';
 import 'package:ees/app/widgets/app_button.dart';
@@ -26,7 +28,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 3.w, left: 4.w, right: 4.w, top: 1.w),
+      padding: EdgeInsets.only(bottom: 1.w, left: 4.w, right: 4.w, top: 3.w),
       child: Column(
         children: [
           Row(
@@ -35,7 +37,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
               CustomCachedImage(
                 imageUrl: widget.cartItem.product!.image ?? '',
                 width: 20.w,
-                height: 20.w,
+                height: 18.w,
                 fit: BoxFit.cover,
               ),
               SizedBox(width: 10),
@@ -45,14 +47,20 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                   children: [
                     Text(widget.cartItem.product!.name ?? '',
                         style: TextStyle(fontWeight: FontWeight.bold)),
+                    .5.height,
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                            "${widget.cartItem.quantity}  ${widget.cartItem.product!.package ?? ""}"),
+                            "${widget.cartItem.quantity}  ${widget.cartItem.product!.package ?? ""}",
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold)),
                         Text(
-                            '${(double.parse(widget.cartItem.variant!.price!.toString()) * double.parse(widget.cartItem.quantity.toString()))} ر.س',
-                            style: TextStyle(color: Colors.blue)),
+                            '${(double.parse(widget.cartItem.variant!.price!.toString()) * double.parse(widget.cartItem.quantity.toString()))} ج.م',
+                            style: TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
@@ -60,6 +68,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
               ),
             ],
           ),
+          .8.height,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -114,26 +123,13 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                       }),
                 ],
               ),
-              AppButton(
-                'حذف',
-                buttonIcon: Padding(
-                  padding: EdgeInsets.only(left: 3.w),
-                  child: Icon(
-                    Iconsax.trash,
-                    size: 5.5.w,
-                    color: AppColors.red,
-                  ),
-                ),
-                width: 32.w,
-                hieght: 5.h,
-                fontSize: 3.5.w,
-                borderNum: 1.w,
-                borderColor: AppColors.red,
-                bgColor: AppColors.white,
-                titleColor: AppColors.red,
-                hasBorder: true,
+              InkWell(
                 onTap: () => Provider.of<CartProvider>(context, listen: false)
                     .deleteCartItem(widget.cartItem.product!.id.toString()),
+                child: CustomImageAsset(
+                  assetName: AppAssets.deleteBtn,
+                  width: 25.w,
+                ),
               )
             ],
           ),
@@ -151,7 +147,9 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                       .items!
                       .length ==
                   1
-              ? SizedBox()
+              ? SizedBox(
+                  height: 2.w,
+                )
               : Divider(),
         ],
       ),

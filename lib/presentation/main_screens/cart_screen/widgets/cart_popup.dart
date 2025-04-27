@@ -91,6 +91,7 @@ class _CartPopupState extends State<CartPopup>
                           Provider.of<CartProvider>(context, listen: false)
                               .forceAddToCart(widget.productId,
                                   widget.variantId, widget.propertyId);
+                                  
                         },
                       ),
                       TextButton(

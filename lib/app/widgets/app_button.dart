@@ -21,7 +21,6 @@ class AppButton extends StatelessWidget {
       this.borderColor = AppColors.btnColor,
       this.bgColor = AppColors.btnColor,
       this.isButtonDisabled = false,
-      this.textColor = Colors.white,
       this.border});
   final Function? onTap;
   final String? title;
@@ -37,7 +36,6 @@ class AppButton extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final Color bgColor;
   final bool? WithBackIcon;
-  final Color textColor;
   @override
   Widget build(BuildContext context) {
     return Container(

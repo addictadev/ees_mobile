@@ -39,4 +39,5 @@ class EndPoints {
   static const String contactUs = "contact/store-contact";
   static const String deleteAccount = "profile/deactivate-account";
   static const String rateVendor = "rate/store-rate";
+  // static String getProductById({required String id}) => '/api/sales/product/$id';
 }

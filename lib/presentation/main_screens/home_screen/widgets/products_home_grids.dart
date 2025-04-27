@@ -97,7 +97,7 @@ class ProductGrid extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 13.h,
+              height: 12.h,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(3.w),
@@ -105,8 +105,8 @@ class ProductGrid extends StatelessWidget {
               ),
               child: CustomCachedImage(
                 imageUrl: product.image ?? '',
-                width: 30.w,
-                fit: BoxFit.cover,
+                width: 100.w,
+                fit: BoxFit.contain,
               ),
             ),
             SizedBox(height: .5.h),

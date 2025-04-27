@@ -6,7 +6,7 @@ class AppAssets {
   static final AppAssets _instance = AppAssets._();
   static const String appLogo = 'assets/images/logo.png';
   static const String backIcon = 'assets/images/back.png';
-  static const String aciveDriver = "assets/images/acive_driver.png";
+  static const String deleteBtn = "assets/images/delete.png";
   static const String logo = "assets/images/logo.png";
   static const String avatar = "assets/images/avatar.png";
   static const String onboardingTwo = "assets/images/onb2.png";

@@ -5,10 +5,12 @@ import 'package:ees/app/utils/network/end_points.dart';
 import 'package:ees/app/utils/show_toast.dart';
 import 'package:ees/models/cart_model.dart';
 import 'package:ees/presentation/main_screens/cart_screen/widgets/cart_popup.dart';
+import 'package:ees/presentation/main_screens/cart_screen/widgets/makeOrderPopUp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import '../app/navigation_services/navigation_manager.dart';
+import '../presentation/main_screens/cart_screen/widgets/cartBottomSheet.dart';
 import '../presentation/main_screens/main_nav_screen.dart';
 
 class CartProvider with ChangeNotifier {
@@ -34,8 +36,12 @@ class CartProvider with ChangeNotifier {
 
       // التأكد من أن الاستجابة تحتوي على البيانات المطلوبة
       if (response != null && response['success'] == true) {
-        NavigationManager.navigatToAndFinish(MainScreen(currentIndex: 1));
-        showCustomedToast(response['message'], ToastType.success);
+        getCartItems().then((value) {
+          showCartBottomSheet(NavigationManager.navigatorKey.currentContext!,
+              cartCount: cartModel!.data!.items!.length,
+              miuOrder: cartModel!.data!.items!.last.variant!.minQuantity ?? 0,
+              cartTotal: cartModel!.data!.totalAfterDiscount);
+        });
       } else {
         if (response['message'].toString().contains('الحالية')) {
         } else {
@@ -68,10 +74,13 @@ class CartProvider with ChangeNotifier {
       if (response['success'] == true) {
         EasyLoading.dismiss();
         notifyListeners();
-        NavigationManager.navigatToAndFinish(MainScreen(
-          currentIndex: 1,
-        ));
-        showCustomedToast(response['message'], ToastType.success);
+        NavigationManager.pop();
+        getCartItems().then((value) {
+          showCartBottomSheet(NavigationManager.navigatorKey.currentContext!,
+              cartCount: cartModel!.data!.items!.length,
+              miuOrder: cartModel!.data!.items!.last.variant!.minQuantity ?? 0,
+              cartTotal: cartModel!.data!.totalAfterDiscount);
+        });
       } else {
         EasyLoading.dismiss();
         notifyListeners();
@@ -240,12 +249,12 @@ class CartProvider with ChangeNotifier {
       if (response['status'] == true) {
         noteController.clear();
         copounCtn.clear();
+
         EasyLoading.dismiss();
-        showCustomedToast(response['message'], ToastType.success);
+        getCartItems();
+        showOrderSuccessDialog(NavigationManager.navigatorKey.currentContext!);
+
         notifyListeners();
-        NavigationManager.navigatToAndFinish(MainScreen(
-          currentIndex: 2,
-        ));
       } else {
         EasyLoading.dismiss();
         notifyListeners();

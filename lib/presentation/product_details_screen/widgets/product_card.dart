@@ -168,16 +168,11 @@ class ProductAttributes extends StatelessWidget {
           value: colorProperty!.name!));
     }
 
-    final brandCategory = product.categories?.firstWhere(
-      (cat) => cat.name != null,
-      orElse: () => Categories(),
-    );
-
-    if (brandCategory?.name != null) {
+    if (product.brand?.name != null) {
       attributes.add(_AttributeItem(
           icon: Icons.business,
           label: "العلامة التجارية",
-          value: brandCategory!.name!));
+          value: product.brand!.name!));
     }
 
     if (product.properties != null) {
